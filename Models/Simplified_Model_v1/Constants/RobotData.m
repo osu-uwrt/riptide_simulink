@@ -22,18 +22,24 @@ importedData.robot.volume = 0.0348;%m^3
 
 if(exist("RobotOrginTransform", "var") ~= 1)
     disp("Cannot find RobotOrginTransform! Prep sim may need to be run...");
-    return
+else
+    %Do transforms   
+    importedData.robot.com = transformPointsForward(RobotOrginTransform, importedData.robot.com);
+    importedData.robot.cob = transformPointsForward(RobotOrginTransform, importedData.robot.cob);
 end
 
-%Do transforms
-importedData.robot.com = transformPointsForward(RobotOrginTransform, importedData.robot.com);
-importedData.robot.cob = transformPointsForward(RobotOrginTransform, importedData.robot.cob);
-
 %Write transformations to file to make simulink happy
-FID = fopen("Parameters/robotCenterOfMass.m", "w");
-fprintf(FID, 'robotCoM=[%f %f %f]', importedData.robot.com(1), importedData.robot.com(2), importedData.robot.com(3));
-FID = fopen("Parameters/robotMomentOfInertia.m", "w");
-fprintf(FID, 'robotMoI=[%f %f %f]', importedData.robot.inertia(1), importedData.robot.inertia(2), importedData.robot.inertia(3));
-FID = fopen("Parameters/robotMass.m", "w");
-fprintf(FID, 'robot_Mass=%f', importedData.robot.mass);
+FID = fopen("Parameters/robotParameters.m", "w");
+fprintf(FID, 'robotCoM=[%f %f %f]\n', importedData.robot.com(1), importedData.robot.com(2), importedData.robot.com(3));
+fprintf(FID, 'robotMoI=[%f %f %f]\n', importedData.robot.inertia(1), importedData.robot.inertia(2), importedData.robot.inertia(3));
+fprintf(FID, 'robot_Mass=%f\n', importedData.robot.mass);
+fprintf(FID, 'robotCoB=[%f %f %f]\n', importedData.robot.cob(1), importedData.robot.cob(2), importedData.robot.cob(3));
+fprintf(FID, 'robot_Volume=%f\n', importedData.robot.volume);
+fprintf(FID, 'rollDragCoefficents [%f %f]' import)
+
+
+cd("Parameters");
+robotParameters;
+cd("..");
+
 
