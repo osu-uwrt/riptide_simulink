@@ -26,6 +26,24 @@ importedData.robot.angularLinearDragCoefficients = [-2.0, -4.5, -2.5]; %r,p,y
 importedData.robot.linearQuadraticDragCoefficients = [-180.0, -180.0, -460.0];
 importedData.robot.angularQuadraticDragCoefficients = [-6.0, -12.0, -12.0];
 
+%Thrusters
+importedData.robot.thrusters.HSFPos = [0.019, -0.051, -0.078];
+importedData.robot.thrusters.HSFDir = [0.0, 1.57079, 0.0];
+importedData.robot.thrusters.HSAPos = [-0.764, -0.051, -0.078];
+importedData.robot.thrusters.HSADir = [0.0, 1.57079, 0.0];
+importedData.robot.thrusters.HPAPos = [-0.764, 0.763, -0.078];
+importedData.robot.thrusters.HPADir = [0.0, 1.57079, 0.0];
+importedData.robot.thrusters.HPFPos = [0.019, 0.763, -0.078];
+importedData.robot.thrusters.HPFDir = [0.0, 1.57079, 0.0];
+importedData.robot.thrusters.VSFPos = [-0.04, 0.008, -0.0706];
+importedData.robot.thrusters.VSFDir = [0.0, 0, -2.35619];
+importedData.robot.thrusters.VSAPos = [-0.676, 0.008, -0.0706];
+importedData.robot.thrusters.VSADir = [0.0, 0, -0.78540];
+importedData.robot.thrusters.VPAPos = [-0.676 0.674, -0.0706];
+importedData.robot.thrusters.VPADir = [0.0, 0, 0.78540];
+importedData.robot.thrusters.VPFPos = [-0.04, 0.674, -0.0706];
+importedData.robot.thrusters.VPFDir = [0.0, 0, 2.35619];
+
 if(exist("RobotOrginTransform", "var") ~= 1)
     disp("Cannot find RobotOrginTransform! Prep sim may need to be run...");
 else

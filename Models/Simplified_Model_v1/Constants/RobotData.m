@@ -38,11 +38,11 @@ importedData.robot.thrusters.HPFDir = [0.0, 1.57079, 0.0];
 importedData.robot.thrusters.VSFPos = [-0.04, 0.008, -0.0706];
 importedData.robot.thrusters.VSFDir = [0.0, 0, -2.35619];
 importedData.robot.thrusters.VSAPos = [-0.676, 0.008, -0.0706];
-importedData.robot.thrusters.VSADir = [0.0, 0, 0.78540];
+importedData.robot.thrusters.VSADir = [0.0, 0, -0.78540];
 importedData.robot.thrusters.VPAPos = [-0.676 0.674, -0.0706];
 importedData.robot.thrusters.VPADir = [0.0, 0, 0.78540];
 importedData.robot.thrusters.VPFPos = [-0.04, 0.674, -0.0706];
-importedData.robot.thrusters.VPFDir = [0.0, 0, -2.35619];
+importedData.robot.thrusters.VPFDir = [0.0, 0, 2.35619];
 
 
 if(exist("RobotOrginTransform", "var") ~= 1)
