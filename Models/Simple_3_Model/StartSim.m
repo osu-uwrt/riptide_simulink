@@ -9,3 +9,5 @@ robotParameters;
 
 cd("../..")
 
+Simple_3_Model
+
