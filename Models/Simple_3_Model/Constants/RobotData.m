@@ -44,6 +44,9 @@ importedData.robot.thrusters.VPADir = [0.0, 0, 0.78540];
 importedData.robot.thrusters.VPFPos = [-0.04, 0.674, -0.0706];
 importedData.robot.thrusters.VPFDir = [0.0, 0, 2.35619];
 
+%Robot Height
+importedData.robot.height = .32; %m
+
 if(exist("RobotOrginTransform", "var") ~= 1)
     disp("Cannot find RobotOrginTransform! Prep sim may need to be run...");
 else
