@@ -1,0 +1,4 @@
+timeVector = clock();
+time = timeVector(1) * 3.514e7 + timeVector(2) * 2.628e6 + timeVector(3) * 86400 + timeVector(4) * 3600 + timeVector(5) * 60 + timeVector(6);
+timeout = time + 
+
