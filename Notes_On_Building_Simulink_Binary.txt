@@ -1,0 +1,12 @@
+Prep For Build
+1. Ensure Matlab Coder is installed
+    - It can be found in Add_Ons -- Search "Matlab Coder"
+    - It is possible you will need to change the permissions on the directory in which matlab is installed to allow it to update
+    - Alternatively rerun the matlab installer to add the additional toolbox
+2. Ensure Simulink Coder is installed
+    - It can be found in Add_Ons -- Search "Simulink Coder"
+    - Alternatively rerun the matlab installer to add the additional toolbox
+
+
+To build Simulink C Binary:
+
