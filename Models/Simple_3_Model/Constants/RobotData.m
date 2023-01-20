@@ -58,7 +58,7 @@ end
 %Write transformations to file to make simulink happy
 FID = fopen("Parameters/robotParameters.m", "w");
 fprintf(FID, 'robotCoM=[%f %f %f]\n', importedData.robot.com(1), importedData.robot.com(2), importedData.robot.com(3));
-fprintf(FID, 'robotMoI=[%f %f %f]\n', importedData.robot.inertia(1), importedData.robot.inertia(2), importedData.robot.inertia(3));
+fprintf(FID, 'robot=[%f %f %f]\n', importedData.robot.inertia(1), importedData.robot.inertia(2), importedData.robot.inertia(3));
 fprintf(FID, 'robot_Mass=%f\n', importedData.robot.mass);
 fprintf(FID, 'robotCoB=[%f %f %f]\n', importedData.robot.cob(1), importedData.robot.cob(2), importedData.robot.cob(3));
 fprintf(FID, 'robot_Volume=%f\n', importedData.robot.volume);

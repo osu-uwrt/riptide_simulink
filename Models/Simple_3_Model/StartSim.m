@@ -1,13 +1,10 @@
 cd("Constants")
 
-RobotData;
+RobotConstants;
 WorldData;
 
-cd("Parameters")
 
-robotParameters;
-
-cd("../..")
+cd("..")
 
 %add subsytems to path to allow matlab to find
 addpath("Subsystems/")
