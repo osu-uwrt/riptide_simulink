@@ -1,0 +1,17 @@
+{
+  "SimulinkCodeImporterVersion": 1,
+  "LibraryFileName": "BouyancyTest",
+  "OutputFolder": "/home/hollis/osu-uwrt/development/software/src/riptide_simulink",
+  "CustomCode": {
+    "Language": "C",
+    "GlobalVariableInterface": true,
+    "FunctionArrayLayout": "NotSpecified"
+  },
+  "TestType": "UnitTest",
+  "SandboxSettings": {
+    "Mode": "GenerateAggregatedHeader",
+    "CopySourceFiles": true,
+    "RemoveAllPragma": false,
+    "RemoveVariableDefinitionInHeader": false
+  }
+}
