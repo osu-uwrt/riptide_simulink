@@ -125,6 +125,7 @@ double IntegrationZone::calculateYCentroid(double c, double h, double d, double 
 
         return (p1 + p2 - p3  + p4 - b * (p6 - p7 + p8 + p9 + p10 + p11)) / (24 * o * volume);
     } else if (h == 0){
+
         double p1 = (4 * (pow((a * c + d), 3) - pow((b * c + d), 3)) * k) / c;
         double p2 = 12 * b * pow(j, 2) * k - 12 * a * pow(j, 2) * k - 3 * pow(a, 4) * pow(c, 2) * l + 3 * pow(b, 4) * pow(c, 2) * l;
         double p3 = 8 * pow(b, 3 )* c * d * l - 8 * pow(a, 3) * c * d * l - 6 * pow(a, 2) * pow(d, 2) * l + 6 * pow(b, 2) * pow(d, 2) * l;
@@ -141,7 +142,7 @@ double IntegrationZone::calculateYCentroid(double c, double h, double d, double 
     double p5 = 8 * pow(a, 3) * h * j * l - 8 * pow(b, 3) * h * j * l + 6 * pow(a, 2) * pow(j, 2) * l - 6 * pow(b, 2) * pow(j, 2) * l;
     double p6 = 2 * m * (pow((a * c + d), 4) - pow((b * c + d), 4)) / c;
     double p7 = 2 * m * (pow((a * h + j), 4) - pow((b * h + j), 4)) / h;
-    
+
     return (p1 - p2 + p3 + p4 + p5 - p6 + p7) / (24 * o * volume);
 }
 
@@ -168,6 +169,10 @@ double IntegrationZone::calculateXCentroid(double c, double h, double d, double 
 }
 
 Vector3d IntegrationZone::calculateCentroid(double Mymax, double Mymin, double Bymax, double Bymin, double Xmax, double Xmin, double k, double Cx, double Cy, double Cz, double volume){
+    if (volume == 0) {
+        return Vector3d(0, 0, 0);
+    }
+    
     double x = calculateXCentroid(Mymax, Mymin, Bymax, Bymin, Xmax, Xmin, k, Cx, Cy, Cz, volume);
     double y = calculateYCentroid(Mymax, Mymin, Bymax, Bymin, Xmax, Xmin, k, Cx, Cy, Cz, volume);
     double z = 0.0;

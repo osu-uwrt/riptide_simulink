@@ -134,9 +134,7 @@ bool isCoplanar(Vector3d point, vector<double> plane){
     //  point should be in [x, y, z] form
     //  checks to see if a point is on a plane
 
-    cout << abs(plane.at(3) - (plane.at(0) * point.x + plane.at(1) * point.y + plane.at(2) * point.z)) << endl;
     if(abs(plane.at(3) - (plane.at(0) * point.x + plane.at(1) * point.y + plane.at(2) * point.z)) < 0.000000001){
-        cout << "here" << endl;
         return true;
     }
 
@@ -369,7 +367,6 @@ void calculateBouyancy(vector<Vertex> raw_vertices, Vector3d euler_rotation, Vec
     vector<LineSegment> surfaced_segments;
     if(size(surfaced_vertices) == 4){
         // there is a plane the is entirely above the surface of the water -- only possiblity is 4 in theory
-
 
         //determine all six possible line segments that are completely on top of the water
         vector<LineSegment> segments = {
