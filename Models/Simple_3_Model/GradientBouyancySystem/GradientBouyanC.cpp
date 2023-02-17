@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Vector3d.h"
 #include "Matrix3d.h"
+#include <chrono>
 
 using namespace std;
 
@@ -25,7 +26,12 @@ vector<double> pointsToPlane(Vector3d p1, Vector3d p2, Vector3d p3);
 vector<Vertex> findOtherVertices(vector<Vertex> surfaced_vertices, vector<Vertex>vertices);
 vector<Vertex> generateRawVertices(vector<double> bounding_box);
 
+//this should capable of running at around 5000hz takes about 190000ns
+
 int main(int argc, char *argv[]){
+    auto start = chrono::high_resolution_clock::now();
+
+
     //args go 
     // 1 - x 
     // 2 - y
@@ -58,6 +64,10 @@ int main(int argc, char *argv[]){
     calculateBouyancy(raw_vertices, orentation, position, bouyant_density, bouyant_force, &force, &location);
 
     cout << force << "|" << location.x << "|" << location.y << "|" << location.z << endl; 
+
+
+    auto end = chrono::high_resolution_clock::now();
+    //std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count() << "ns\n";
 }
 
 
@@ -300,8 +310,6 @@ void calculateBouyancy(vector<Vertex> raw_vertices, Vector3d euler_rotation, Vec
         raw_vertices.at(counter).rotated_vector_from_center = rotation_matrix.premultiplyVector(raw_vertices.at(counter).vector_from_center);
         raw_vertices.at(counter).location = raw_vertices.at(counter).rotated_vector_from_center.AddVector(position);
     }
-
-
 
     //if midpoint is above water plane, robot is not submerged; if below, robot is submerged
     //   evaluate space where midpoint (cov not position) is not; if below, evaluate above; vice versa

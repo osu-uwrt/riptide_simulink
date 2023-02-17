@@ -43,14 +43,12 @@ classdef (StrictDefaults) GradientBouyancySystem < matlab.System
         function [force, x_acting, y_acting, z_acting] = stepImpl(obj, x_position, y_position, z_position, roll, pitch, yaw)
             %runs every time
              command = "./GradientBouyancySystem/GradientBouyancy.out " + x_position + " " + y_position + " " + z_position + " " + roll + " " + pitch + " " + yaw;
-            disp(command)
+
              [~, cmdout] = system(command);
             outputs = strsplit(cmdout, "|");
-        
+            
             X = str2double(outputs);
         
-            disp(cmdout)
-
             force = X(1);
             x_acting = X(2);
             y_acting = X(3);

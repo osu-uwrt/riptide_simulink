@@ -116,7 +116,8 @@ vector<Vector3d> Vertex::returnAdjacentIntersections(){
         }     
     }
 
-\    return intersections;
+    this->intersections = intersections;
+    return intersections;
 }
 
 
