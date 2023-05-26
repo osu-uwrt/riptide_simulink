@@ -1,0 +1,1 @@
+/usr/bin/g++ -fPIC -O3 -DNDEBUG -shared -Wl,-soname,Do_Model0.so -o Do_Model0.so CMakeFiles/Do_Model0.dir/Do_Model0.c.o CMakeFiles/Do_Model0.dir/Do_Model0_data.c.o  -lm 

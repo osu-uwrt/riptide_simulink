@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw/build",
+  "command": "/usr/bin/gcc -DALLOCATIONFCN=0 -DCLASSIC_INTERFACE=0 -DDo_Model0_EXPORTS -DHAVESTDIO -DINTEGER_CODE=0 -DMAT_FILE=0 -DMODEL=Do_Model0 -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DMT=0 -DMULTI_INSTANCE_CODE=0 -DNCSTATES=0 -DNUMST=2 -DONESTEPFCN=1 -DTERMFCN=1 -DTID01EQ=1 -I/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C -I/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw -I/usr/local/MATLAB/R2022b/extern/include -I/usr/local/MATLAB/R2022b/simulink/include -I/usr/local/MATLAB/R2022b/rtw/c/src -I/usr/local/MATLAB/R2022b/rtw/c/src/ext_mode/common -I/usr/local/MATLAB/R2022b/rtw/c/ert -O3 -DNDEBUG -fPIC -fwrapv -o CMakeFiles/Do_Model0.dir/Do_Model0.c.o -c /home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw/Do_Model0.c",
+  "file": "/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw/Do_Model0.c"
+},
+{
+  "directory": "/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw/build",
+  "command": "/usr/bin/gcc -DALLOCATIONFCN=0 -DCLASSIC_INTERFACE=0 -DDo_Model0_EXPORTS -DHAVESTDIO -DINTEGER_CODE=0 -DMAT_FILE=0 -DMODEL=Do_Model0 -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DMT=0 -DMULTI_INSTANCE_CODE=0 -DNCSTATES=0 -DNUMST=2 -DONESTEPFCN=1 -DTERMFCN=1 -DTID01EQ=1 -I/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C -I/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw -I/usr/local/MATLAB/R2022b/extern/include -I/usr/local/MATLAB/R2022b/simulink/include -I/usr/local/MATLAB/R2022b/rtw/c/src -I/usr/local/MATLAB/R2022b/rtw/c/src/ext_mode/common -I/usr/local/MATLAB/R2022b/rtw/c/ert -O3 -DNDEBUG -fPIC -fwrapv -o CMakeFiles/Do_Model0.dir/Do_Model0_data.c.o -c /home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw/Do_Model0_data.c",
+  "file": "/home/hunter/osu-uwrt/development/software/src/riptide_simulink/Models/Simple_3_Model_C/Do_Model0_ert_shrlib_rtw/Do_Model0_data.c"
+}
+]
