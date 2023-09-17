@@ -27,8 +27,12 @@ importedData.robot.coefficients.x = [-180.0, -17.0, 0];
 importedData.robot.coefficients.y = [-180.0, -17.0, 0];
 importedData.robot.coefficients.z = [-460.0, -17.0, 0];
 
+importedData.robot.thrusters.systemLimit = 200;
+importedData.robot.thrusters.individualLimit = 22;
+
 %need to flip x and y rots
 %error in HUS and HUP dir
 %x and z rot needs flipped for vector thrusters
+%add in thruster contraints
 
 
