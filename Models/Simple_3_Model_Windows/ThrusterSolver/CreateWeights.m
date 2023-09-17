@@ -1,4 +1,5 @@
 %initialize the thruster pose matrix
+%really the matrix B from B * F = Uf
 thrusterSolver.thrusterPoses = [transpose(eul2rotm(importedData.robot.thrusters.VUSDir, "XYZ") * [1;0;0]), transpose(cross(transpose(importedData.robot.thrusters.VUSPos - importedData.robot.com), eul2rotm(importedData.robot.thrusters.VUSDir, "XYZ") * [1;0;0])) ;
                                 transpose(eul2rotm(importedData.robot.thrusters.VUPDir, "XYZ") * [1;0;0]), transpose(cross(transpose(importedData.robot.thrusters.VUPPos - importedData.robot.com), eul2rotm(importedData.robot.thrusters.VUPDir, "XYZ") * [1;0;0])) ;
                                 transpose(eul2rotm(importedData.robot.thrusters.VLSDir, "XYZ") * [1;0;0]), transpose(cross(transpose(importedData.robot.thrusters.VLSPos - importedData.robot.com), eul2rotm(importedData.robot.thrusters.VLSDir, "XYZ") * [1;0;0])) ;
