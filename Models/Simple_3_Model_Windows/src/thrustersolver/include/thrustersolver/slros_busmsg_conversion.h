@@ -4,7 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include <geometry_msgs/msg/twist.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
-#include <std_msgs/msg/float32_multi_array.hpp>
+#include <std_msgs/msg/int16_multi_array.hpp>
 #include <std_msgs/msg/multi_array_dimension.hpp>
 #include <std_msgs/msg/multi_array_layout.hpp>
 #include "ThrusterSolver_types.h"
@@ -17,8 +17,8 @@ void convertToBus(SL_Bus_geometry_msgs_Twist* busPtr, const geometry_msgs::msg::
 void convertFromBus(geometry_msgs::msg::Vector3& msgPtr, SL_Bus_geometry_msgs_Vector3 const* busPtr);
 void convertToBus(SL_Bus_geometry_msgs_Vector3* busPtr, const geometry_msgs::msg::Vector3& msgPtr);
 
-void convertFromBus(std_msgs::msg::Float32MultiArray& msgPtr, SL_Bus_std_msgs_Float32MultiArray const* busPtr);
-void convertToBus(SL_Bus_std_msgs_Float32MultiArray* busPtr, const std_msgs::msg::Float32MultiArray& msgPtr);
+void convertFromBus(std_msgs::msg::Int16MultiArray& msgPtr, SL_Bus_std_msgs_Int16MultiArray const* busPtr);
+void convertToBus(SL_Bus_std_msgs_Int16MultiArray* busPtr, const std_msgs::msg::Int16MultiArray& msgPtr);
 
 void convertFromBus(std_msgs::msg::MultiArrayDimension& msgPtr, SL_Bus_std_msgs_MultiArrayDimension const* busPtr);
 void convertToBus(SL_Bus_std_msgs_MultiArrayDimension* busPtr, const std_msgs::msg::MultiArrayDimension& msgPtr);

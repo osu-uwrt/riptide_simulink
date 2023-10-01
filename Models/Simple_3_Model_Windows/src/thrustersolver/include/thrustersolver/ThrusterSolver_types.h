@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.14
+// Model version                  : 1.17
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Oct  1 13:05:37 2023
+// C/C++ source code generated on : Sun Oct  1 14:02:19 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -91,17 +91,17 @@ struct SL_Bus_std_msgs_MultiArrayLayout
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Float32MultiArray_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Float32MultiArray_
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Int16MultiArray_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Int16MultiArray_
 
-// MsgType=std_msgs/Float32MultiArray
-struct SL_Bus_std_msgs_Float32MultiArray
+// MsgType=std_msgs/Int16MultiArray
+struct SL_Bus_std_msgs_Int16MultiArray
 {
   // MsgType=std_msgs/MultiArrayLayout
   SL_Bus_std_msgs_MultiArrayLayout layout;
 
   // IsVarLen=1:VarLenCategory=data:VarLenElem=data_SL_Info:TruncateAction=warn
-  real32_T data[8];
+  int16_T data[8];
 
   // IsVarLen=1:VarLenCategory=length:VarLenElem=data
   SL_Bus_ROSVariableLengthArrayInfo data_SL_Info;
@@ -109,7 +109,7 @@ struct SL_Bus_std_msgs_Float32MultiArray
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S4>/SinkBlock'
+// Custom Type definition for MATLABSystem: '<S5>/SinkBlock'
 #include "rmw/qos_profiles.h"
 #include "rmw/types.h"
 #include "rmw/types.h"

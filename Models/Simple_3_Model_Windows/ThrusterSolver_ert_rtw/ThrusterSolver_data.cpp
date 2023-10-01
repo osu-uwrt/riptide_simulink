@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.14
+// Model version                  : 1.17
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Oct  1 13:05:37 2023
+// C/C++ source code generated on : Sun Oct  1 14:02:19 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -325,7 +325,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
     },                                 // layout
 
     {
-      0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F }
+      0, 0, 0, 0, 0, 0, 0, 0 }
     ,                                  // data
 
     {
@@ -335,7 +335,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Out1_Y0
-  //  Referenced by: '<S6>/Out1'
+  //  Referenced by: '<S7>/Out1'
 
   {
     {
@@ -352,7 +352,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Out1_Y0_a
-  //  Referenced by: '<S7>/Out1'
+  //  Referenced by: '<S8>/Out1'
 
   {
     {
@@ -403,12 +403,12 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Expression: 0
-  //  Referenced by: '<S5>/Constant'
+  //  Referenced by: '<S6>/Constant'
 
   0.0,
 
   // Expression: [inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf]
-  //  Referenced by: '<S5>/Previous B Matrix'
+  //  Referenced by: '<S6>/Previous B Matrix'
 
   { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -416,17 +416,17 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
     0.0, 0.0, 0.0 },
 
   // Expression: [ inf inf inf inf inf inf inf inf]
-  //  Referenced by: '<S5>/Previous Weights'
+  //  Referenced by: '<S6>/Previous Weights'
 
   { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 
   // Expression: 0
-  //  Referenced by: '<S5>/Apply Overuse'
+  //  Referenced by: '<S6>/Apply Overuse'
 
   0.0,
 
   // Expression: 1
-  //  Referenced by: '<S5>/Constant1'
+  //  Referenced by: '<S6>/Constant1'
 
   1.0
 };

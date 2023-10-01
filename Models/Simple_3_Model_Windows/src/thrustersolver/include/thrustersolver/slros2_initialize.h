@@ -1,5 +1,5 @@
 // Copyright 2022 The MathWorks, Inc.
-// Generated 01-Oct-2023 13:05:46
+// Generated 01-Oct-2023 14:02:26
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "ThrusterSolver_types.h"
@@ -33,7 +33,7 @@ inline rclcpp::QoS getQOSSettingsFromRMW(const rmw_qos_profile_t& qosProfile) {
     return qos;
 }
 // ThrusterSolver/Publish Thruster Forces
-extern SimulinkPublisher<std_msgs::msg::Float32MultiArray,SL_Bus_std_msgs_Float32MultiArray> Pub_ThrusterSolver_113;
+extern SimulinkPublisher<std_msgs::msg::Int16MultiArray,SL_Bus_std_msgs_Int16MultiArray> Pub_ThrusterSolver_113;
 // ThrusterSolver/Active Input
 extern SimulinkSubscriber<geometry_msgs::msg::Twist,SL_Bus_geometry_msgs_Twist> Sub_ThrusterSolver_115;
 // ThrusterSolver/FF Input
@@ -44,6 +44,10 @@ extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_Thru
 extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSolver_126;
 // For Block ThrusterSolver/Individual Limit
 extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_147;
+// For Block ThrusterSolver/RPM Spline Coeffs
+extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSolver_160;
+// For Block ThrusterSolver/RPM Spline Segment Cutoffs
+extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSolver_165;
 // For Block ThrusterSolver/System Limit
 extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_148;
 #endif

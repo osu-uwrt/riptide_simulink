@@ -4,9 +4,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.14
+// Model version                  : 1.17
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Oct 01 13:05:48 2023
+// C/C++ source code generated on : Sun Oct 01 14:02:27 2023
 //
 #ifndef _ROS2_MATLAB_NODEINTERFACE_
 #define _ROS2_MATLAB_NODEINTERFACE_
@@ -31,7 +31,7 @@ class ThrusterSolver;
 #include "ThrusterSolver_types.h"
 #include "slros_busmsg_conversion.h"
 #include "geometry_msgs/msg/twist.hpp"
-#include "std_msgs/msg/float32_multi_array.hpp"
+#include "std_msgs/msg/int16_multi_array.hpp"
 namespace ros2 {
 namespace matlab {
   //Semaphore using std::CV and std::mutex

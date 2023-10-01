@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.14
+// Model version                  : 1.17
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Oct  1 13:05:37 2023
+// C/C++ source code generated on : Sun Oct  1 14:02:19 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -21,13 +21,6 @@
 #include "rtwtypes.h"
 #include "slros2_initialize.h"
 #include "ThrusterSolver_types.h"
-
-extern "C"
-{
-
-#include "rtGetInf.h"
-
-}
 
 extern "C"
 {
@@ -47,35 +40,39 @@ extern "C"
 
 // Block signals (default storage)
 struct B_ThrusterSolver_T {
-  SL_Bus_std_msgs_Float32MultiArray BusAssignment;// '<Root>/Bus Assignment'
+  SL_Bus_std_msgs_Int16MultiArray BusAssignment;// '<Root>/Bus Assignment'
+  real_T value[80];
   real_T weightsMatrix[64];
   real_T A_tmp[64];
   real_T A[64];
-  real_T value[48];
   real_T value_m[48];
+  real_T value_c[48];
   real_T b[36];
-  real_T A_c[36];
-  real_T value_k[8];
-  real_T IndividualOveruseMutliplier[8];// '<S5>/Individual Overuse Mutliplier'
-  real_T OverallSystem[8];             // '<S5>/Overall System'
-  SL_Bus_geometry_msgs_Twist In1;      // '<S7>/In1'
-  SL_Bus_geometry_msgs_Twist In1_g;    // '<S6>/In1'
+  real_T A_k[36];
+  real_T value_cx[20];
+  real_T value_b[8];
+  real_T OverallSystem[8];             // '<S6>/Overall System'
+  real_T IndividualOveruseMutliplier[8];// '<S6>/Individual Overuse Mutliplier'
+  SL_Bus_geometry_msgs_Twist In1;      // '<S8>/In1'
+  SL_Bus_geometry_msgs_Twist In1_g;    // '<S7>/In1'
   SL_Bus_geometry_msgs_Twist b_varargout_2;
   real_T dv[6];
   char_T b_zeroDelimTopic[30];
-  char_T b_zeroDelimTopic_c[26];
-  char_T prmName[23];
-  char_T b_zeroDelimTopic_b[17];
-  char_T prmName_p[16];
+  char_T b_zeroDelimTopic_p[26];
+  char_T prmName[25];
+  char_T prmName_c[24];
+  char_T prmName_f[23];
+  char_T prmName_g[16];
+  char_T prmName_g1[14];
   int8_T p[8];
   int8_T ipiv[8];
   real_T smax;
   real_T s;
-  real_T smax_c;
-  real_T s_f;
-  int64_T value_g;
+  real_T smax_m;
+  real_T s_n;
+  int64_T value_p;
   int8_T c_p[6];
-  int8_T ipiv_g[6];
+  int8_T ipiv_l[6];
   int32_T k;
   int32_T kAcol;
   int32_T jj;
@@ -83,32 +80,38 @@ struct B_ThrusterSolver_T {
   int32_T jA;
   int32_T ijA;
   int32_T value_tmp;
+  int32_T kAcol_j;
+  int32_T jj_d;
+  int32_T c_j;
+  int32_T n;
   uint32_T len;
 };
 
 // Block states (default storage) for system '<Root>'
 struct DW_ThrusterSolver_T {
   ros_slros2_internal_block_Get_T obj; // '<Root>/System Limit'
+  ros_slros2_internal_block_Get_T obj_e;// '<Root>/RPM Spline Segment Cutoffs'
+  ros_slros2_internal_block_Get_T obj_f;// '<Root>/RPM Spline Coeffs'
   ros_slros2_internal_block_Get_T obj_p;// '<Root>/Individual Limit'
-  ros_slros2_internal_block_Get_T obj_e;// '<Root>/Get Thruster Wrench Matrix'
+  ros_slros2_internal_block_Get_T obj_et;// '<Root>/Get Thruster Wrench Matrix'
   ros_slros2_internal_block_Get_T obj_d;// '<Root>/Get Thruster Weights'
   ros_slros2_internal_block_Sub_T obj_h;// '<S3>/SourceBlock'
   ros_slros2_internal_block_Sub_T obj_c;// '<S1>/SourceBlock'
-  ros_slros2_internal_block_Pub_T obj_eh;// '<S4>/SinkBlock'
-  real_T PreviousBMatrix_PreviousInput[48];// '<S5>/Previous B Matrix'
-  real_T PreviousWeights_PreviousInput[8];// '<S5>/Previous Weights'
+  ros_slros2_internal_block_Pub_T obj_eh;// '<S5>/SinkBlock'
+  real_T PreviousBMatrix_PreviousInput[48];// '<S6>/Previous B Matrix'
+  real_T PreviousWeights_PreviousInput[8];// '<S6>/Previous Weights'
 };
 
 // Parameters (default storage)
 struct P_ThrusterSolver_T_ {
-  SL_Bus_std_msgs_Float32MultiArray Constant_Value;// Computed Parameter: Constant_Value
-                                                      //  Referenced by: '<S2>/Constant'
+  SL_Bus_std_msgs_Int16MultiArray Constant_Value;// Computed Parameter: Constant_Value
+                                                    //  Referenced by: '<S2>/Constant'
 
   SL_Bus_geometry_msgs_Twist Out1_Y0;  // Computed Parameter: Out1_Y0
-                                          //  Referenced by: '<S6>/Out1'
+                                          //  Referenced by: '<S7>/Out1'
 
   SL_Bus_geometry_msgs_Twist Out1_Y0_a;// Computed Parameter: Out1_Y0_a
-                                          //  Referenced by: '<S7>/Out1'
+                                          //  Referenced by: '<S8>/Out1'
 
   SL_Bus_geometry_msgs_Twist Constant_Value_i;// Computed Parameter: Constant_Value_i
                                                  //  Referenced by: '<S3>/Constant'
@@ -117,21 +120,21 @@ struct P_ThrusterSolver_T_ {
                                                  //  Referenced by: '<S1>/Constant'
 
   real_T Constant_Value_n;             // Expression: 0
-                                          //  Referenced by: '<S5>/Constant'
+                                          //  Referenced by: '<S6>/Constant'
 
   real_T PreviousBMatrix_InitialConditio[48];
   // Expression: [inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf]
-     //  Referenced by: '<S5>/Previous B Matrix'
+     //  Referenced by: '<S6>/Previous B Matrix'
 
   real_T PreviousWeights_InitialConditio[8];
                                // Expression: [ inf inf inf inf inf inf inf inf]
-                                  //  Referenced by: '<S5>/Previous Weights'
+                                  //  Referenced by: '<S6>/Previous Weights'
 
   real_T ApplyOveruse_Threshold;       // Expression: 0
-                                          //  Referenced by: '<S5>/Apply Overuse'
+                                          //  Referenced by: '<S6>/Apply Overuse'
 
   real_T Constant1_Value;              // Expression: 1
-                                          //  Referenced by: '<S5>/Constant1'
+                                          //  Referenced by: '<S6>/Constant1'
 
 };
 
@@ -204,7 +207,11 @@ extern volatile boolean_T runModel;
 //
 //  Block '<Root>/Reshape' : Reshape block reduction
 //  Block '<Root>/Reshape1' : Reshape block reduction
-//  Block '<S5>/Reshape' : Reshape block reduction
+//  Block '<Root>/Reshape2' : Reshape block reduction
+//  Block '<Root>/Reshape3' : Reshape block reduction
+//  Block '<Root>/Reshape4' : Reshape block reduction
+//  Block '<Root>/Reshape5' : Reshape block reduction
+//  Block '<S6>/Reshape' : Reshape block reduction
 
 
 //-
@@ -225,11 +232,12 @@ extern volatile boolean_T runModel;
 //  '<S1>'   : 'ThrusterSolver/Active Input'
 //  '<S2>'   : 'ThrusterSolver/Blank Message'
 //  '<S3>'   : 'ThrusterSolver/FF Input'
-//  '<S4>'   : 'ThrusterSolver/Publish Thruster Forces'
-//  '<S5>'   : 'ThrusterSolver/Thruster Solver'
-//  '<S6>'   : 'ThrusterSolver/Active Input/Enabled Subsystem'
-//  '<S7>'   : 'ThrusterSolver/FF Input/Enabled Subsystem'
-//  '<S8>'   : 'ThrusterSolver/Thruster Solver/MATLAB Function'
+//  '<S4>'   : 'ThrusterSolver/MATLAB Function'
+//  '<S5>'   : 'ThrusterSolver/Publish Thruster Forces'
+//  '<S6>'   : 'ThrusterSolver/Thruster Solver'
+//  '<S7>'   : 'ThrusterSolver/Active Input/Enabled Subsystem'
+//  '<S8>'   : 'ThrusterSolver/FF Input/Enabled Subsystem'
+//  '<S9>'   : 'ThrusterSolver/Thruster Solver/MATLAB Function'
 
 #endif                                 // RTW_HEADER_ThrusterSolver_h_
 

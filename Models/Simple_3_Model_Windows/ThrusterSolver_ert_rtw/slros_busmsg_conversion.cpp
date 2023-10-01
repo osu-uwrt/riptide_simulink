@@ -41,19 +41,19 @@ void convertToBus(SL_Bus_geometry_msgs_Vector3* busPtr, const geometry_msgs::msg
 }
 
 
-// Conversions between SL_Bus_std_msgs_Float32MultiArray and std_msgs::msg::Float32MultiArray
+// Conversions between SL_Bus_std_msgs_Int16MultiArray and std_msgs::msg::Int16MultiArray
 
-void convertFromBus(std_msgs::msg::Float32MultiArray& msgPtr, SL_Bus_std_msgs_Float32MultiArray const* busPtr)
+void convertFromBus(std_msgs::msg::Int16MultiArray& msgPtr, SL_Bus_std_msgs_Int16MultiArray const* busPtr)
 {
-  const std::string rosMessageType("std_msgs/Float32MultiArray");
+  const std::string rosMessageType("std_msgs/Int16MultiArray");
 
   convertFromBusVariablePrimitiveArray(msgPtr.data, busPtr->data, busPtr->data_SL_Info);
   convertFromBus(msgPtr.layout, &busPtr->layout);
 }
 
-void convertToBus(SL_Bus_std_msgs_Float32MultiArray* busPtr, const std_msgs::msg::Float32MultiArray& msgPtr)
+void convertToBus(SL_Bus_std_msgs_Int16MultiArray* busPtr, const std_msgs::msg::Int16MultiArray& msgPtr)
 {
-  const std::string rosMessageType("std_msgs/Float32MultiArray");
+  const std::string rosMessageType("std_msgs/Int16MultiArray");
 
   convertToBusVariablePrimitiveArray(busPtr->data, busPtr->data_SL_Info, msgPtr.data, slros::EnabledWarning(rosMessageType, "data"));
   convertToBus(&busPtr->layout, msgPtr.layout);
