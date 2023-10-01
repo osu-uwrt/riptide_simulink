@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.11
+// Model version                  : 1.14
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Sep 24 14:29:31 2023
+// C/C++ source code generated on : Sun Oct  1 13:05:37 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -45,13 +45,14 @@ void *threadJoinStatus;
 int terminatingmodel = 0;
 void *baseRateTask(void *arg)
 {
-  runModel = (rtmGetErrorStatus(ThrusterSolver_Obj.getRTM()) == (NULL));
+  runModel = (rtmGetErrorStatus(ThrusterSolver_Obj.getRTM()) == (nullptr));
   while (runModel) {
     sem_wait(&baserateTaskSem);
     ThrusterSolver_Obj.step();
 
     // Get model outputs here
-    stopRequested = !((rtmGetErrorStatus(ThrusterSolver_Obj.getRTM()) == (NULL)));
+    stopRequested = !((rtmGetErrorStatus(ThrusterSolver_Obj.getRTM()) ==
+                       (nullptr)));
     runModel = !stopRequested;
   }
 
@@ -90,7 +91,7 @@ int main(int argc, char **argv)
   ThrusterSolver_Obj.initialize();
 
   // Call RTOS Initialization function
-  myRTOSInit(0.2, 0);
+  myRTOSInit(0.03333333333, 0);
 
   // Wait for stop semaphore
   sem_wait(&stopSem);

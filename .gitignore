@@ -1,0 +1,9 @@
+**/build
+**/log
+**/install
+**/slprj
+
+**/build/**
+**/log/**
+**/install/**
+**/slprj/**
