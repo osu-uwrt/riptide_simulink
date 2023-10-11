@@ -1,5 +1,5 @@
 // Copyright 2022 The MathWorks, Inc.
-// Generated 01-Oct-2023 14:02:26
+// Generated 10-Oct-2023 19:23:45
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "ThrusterSolver_types.h"
@@ -43,11 +43,11 @@ extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_Thru
 // For Block ThrusterSolver/Get Thruster Wrench Matrix
 extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSolver_126;
 // For Block ThrusterSolver/Individual Limit
-extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_147;
+extern SimulinkParameterGetter<real64_T,double> ParamGet_ThrusterSolver_147;
 // For Block ThrusterSolver/RPM Spline Coeffs
 extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSolver_160;
 // For Block ThrusterSolver/RPM Spline Segment Cutoffs
 extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSolver_165;
 // For Block ThrusterSolver/System Limit
-extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_148;
+extern SimulinkParameterGetter<real64_T,double> ParamGet_ThrusterSolver_148;
 #endif

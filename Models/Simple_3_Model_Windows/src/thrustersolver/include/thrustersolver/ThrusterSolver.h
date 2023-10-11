@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.17
+// Model version                  : 1.18
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Oct  1 14:02:19 2023
+// C/C++ source code generated on : Tue Oct 10 19:23:36 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -68,23 +68,11 @@ struct B_ThrusterSolver_T {
   int8_T ipiv[8];
   real_T smax;
   real_T s;
-  real_T smax_m;
-  real_T s_n;
-  int64_T value_p;
+  real_T value_me;
+  real_T smax_n;
+  real_T s_p;
   int8_T c_p[6];
   int8_T ipiv_l[6];
-  int32_T k;
-  int32_T kAcol;
-  int32_T jj;
-  int32_T e_k;
-  int32_T jA;
-  int32_T ijA;
-  int32_T value_tmp;
-  int32_T kAcol_j;
-  int32_T jj_d;
-  int32_T c_j;
-  int32_T n;
-  uint32_T len;
 };
 
 // Block states (default storage) for system '<Root>'

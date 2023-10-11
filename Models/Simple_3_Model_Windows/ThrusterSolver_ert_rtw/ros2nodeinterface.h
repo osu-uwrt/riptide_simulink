@@ -4,9 +4,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.17
+// Model version                  : 1.18
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Sun Oct 01 14:02:27 2023
+// C/C++ source code generated on : Tue Oct 10 19:23:46 2023
 //
 #ifndef _ROS2_MATLAB_NODEINTERFACE_
 #define _ROS2_MATLAB_NODEINTERFACE_
