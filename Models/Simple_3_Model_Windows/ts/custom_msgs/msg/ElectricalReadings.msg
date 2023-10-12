@@ -1,0 +1,7 @@
+float32 port_voltage
+float32 stbd_voltage
+float32 balanced_voltage
+float32 twelve_volt_voltage
+float32 five_volt_voltage
+float32 three_volt_voltage
+float32[8] esc_current
