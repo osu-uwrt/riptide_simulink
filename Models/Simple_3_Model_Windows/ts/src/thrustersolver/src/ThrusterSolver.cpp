@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.43
+// Model version                  : 1.46
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 12 04:58:06 2023
+// C/C++ source code generated on : Thu Oct 12 20:05:50 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -997,7 +997,7 @@ void ThrusterSolver::step()
       }
 
       ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_k[7],
-        rt_powd_snf(ThrusterSolver_B.AddFeedForward[e_k], 0.25));
+        rt_powd_snf(std::abs(ThrusterSolver_B.AddFeedForward[e_k]), 0.25));
       if ((ThrusterSolver_B.value_p < 0L) && (ThrusterSolver_B.value_n <
            MIN_int64_T - ThrusterSolver_B.value_p)) {
         ThrusterSolver_B.RPMs[e_k] = -9.2233720368547758E+18;
