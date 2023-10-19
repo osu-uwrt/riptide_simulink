@@ -1,5 +1,5 @@
 // Copyright 2022 The MathWorks, Inc.
-// Generated 18-Oct-2023 23:23:29
+// Generated 19-Oct-2023 00:18:07
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "ThrusterSolver_types.h"
@@ -7,6 +7,7 @@
 #include "slros2_generic_pubsub.h"
 // Generic service header
 #include "slros2_generic_service.h"
+#include "slros2_time.h"
 #include "slros2_generic_param.h"
 extern rclcpp::Node::SharedPtr SLROSNodePtr;
 #ifndef SET_QOS_VALUES

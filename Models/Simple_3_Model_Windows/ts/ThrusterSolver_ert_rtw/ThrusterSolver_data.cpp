@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.46
+// Model version                  : 1.50
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Wed Oct 18 23:23:26 2023
+// C/C++ source code generated on : Thu Oct 19 00:18:05 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -21,7 +21,7 @@
 // Block parameters (default storage)
 P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   // Computed Parameter: Constant_Value
-  //  Referenced by: '<S10>/Constant'
+  //  Referenced by: '<S11>/Constant'
 
   {
     {
@@ -335,7 +335,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Constant_Value_k
-  //  Referenced by: '<S9>/Constant'
+  //  Referenced by: '<S10>/Constant'
 
   {
     {
@@ -649,7 +649,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Out1_Y0
-  //  Referenced by: '<S13>/Out1'
+  //  Referenced by: '<S14>/Out1'
 
   {
     {
@@ -963,7 +963,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Constant_Value_m
-  //  Referenced by: '<S5>/Constant'
+  //  Referenced by: '<S6>/Constant'
 
   {
     {
@@ -1277,7 +1277,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Out1_Y0_l
-  //  Referenced by: '<S7>/Out1'
+  //  Referenced by: '<S8>/Out1'
 
   {
     {
@@ -1294,7 +1294,7 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Computed Parameter: Out1_Y0_a
-  //  Referenced by: '<S8>/Out1'
+  //  Referenced by: '<S9>/Out1'
 
   {
     {
@@ -1345,27 +1345,27 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   },
 
   // Expression: 8
-  //  Referenced by: '<S4>/Constant2'
+  //  Referenced by: '<S5>/Constant2'
 
   8.0,
 
   // Expression: 8
-  //  Referenced by: '<S4>/Constant1'
+  //  Referenced by: '<S5>/Constant1'
 
   8.0,
 
   // Expression: 0
-  //  Referenced by: '<S6>/Constant'
+  //  Referenced by: '<S7>/Constant'
 
   0.0,
 
   // Computed Parameter: ThrusterForces_Y0
-  //  Referenced by: '<S6>/Thruster Forces'
+  //  Referenced by: '<S7>/Thruster Forces'
 
   0.0,
 
   // Expression: [inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf; inf inf inf inf inf inf]
-  //  Referenced by: '<S6>/Previous B Matrix'
+  //  Referenced by: '<S7>/Previous B Matrix'
 
   { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -1373,19 +1373,29 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
     0.0, 0.0, 0.0 },
 
   // Expression: [ inf inf inf inf inf inf inf inf]
-  //  Referenced by: '<S6>/Previous Weights'
+  //  Referenced by: '<S7>/Previous Weights'
 
   { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 
   // Expression: 0
-  //  Referenced by: '<S6>/Apply Overuse'
+  //  Referenced by: '<S7>/Apply Overuse'
 
   0.0,
 
   // Expression: 1
-  //  Referenced by: '<S6>/Constant1'
+  //  Referenced by: '<S7>/Constant1'
 
-  1.0
+  1.0,
+
+  // Expression: 0
+  //  Referenced by: '<S3>/Previous Reset'
+
+  0.0,
+
+  // Expression: .02
+  //  Referenced by: '<S3>/Constant'
+
+  0.02
 };
 
 //
