@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.50
+// Model version                  : 1.65
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 19 00:18:05 2023
+// C/C++ source code generated on : Thu Oct 19 01:13:05 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -88,12 +88,12 @@ void ThrusterSolver::ThrusterSolver_inv(const real_T x[64], real_T y[64])
     jj = c_j * 9;
     n = 8 - c_j;
     jA = 0;
-    ThrusterSolver_B.smax_g = std::abs(ThrusterSolver_B.A[jj]);
+    ThrusterSolver_B.smax_m = std::abs(ThrusterSolver_B.A[jj]);
     for (d_k = 2; d_k <= n; d_k++) {
-      ThrusterSolver_B.s_m = std::abs(ThrusterSolver_B.A[(jj + d_k) - 1]);
-      if (ThrusterSolver_B.s_m > ThrusterSolver_B.smax_g) {
+      ThrusterSolver_B.s_n = std::abs(ThrusterSolver_B.A[(jj + d_k) - 1]);
+      if (ThrusterSolver_B.s_n > ThrusterSolver_B.smax_m) {
         jA = d_k - 1;
-        ThrusterSolver_B.smax_g = ThrusterSolver_B.s_m;
+        ThrusterSolver_B.smax_m = ThrusterSolver_B.s_n;
       }
     }
 
@@ -104,10 +104,10 @@ void ThrusterSolver::ThrusterSolver_inv(const real_T x[64], real_T y[64])
         for (jA = 0; jA < 8; jA++) {
           kAcol = jA << 3;
           d_k = kAcol + c_j;
-          ThrusterSolver_B.smax_g = ThrusterSolver_B.A[d_k];
+          ThrusterSolver_B.smax_m = ThrusterSolver_B.A[d_k];
           kAcol += n;
           ThrusterSolver_B.A[d_k] = ThrusterSolver_B.A[kAcol];
-          ThrusterSolver_B.A[kAcol] = ThrusterSolver_B.smax_g;
+          ThrusterSolver_B.A[kAcol] = ThrusterSolver_B.smax_m;
         }
       }
 
@@ -120,12 +120,12 @@ void ThrusterSolver::ThrusterSolver_inv(const real_T x[64], real_T y[64])
     n = 6 - c_j;
     jA = jj + 10;
     for (d_k = 0; d_k <= n; d_k++) {
-      ThrusterSolver_B.smax_g = ThrusterSolver_B.A[((d_k << 3) + jj) + 8];
-      if (ThrusterSolver_B.smax_g != 0.0) {
+      ThrusterSolver_B.smax_m = ThrusterSolver_B.A[((d_k << 3) + jj) + 8];
+      if (ThrusterSolver_B.smax_m != 0.0) {
         kAcol = (jA - c_j) + 6;
         for (int32_T ijA{jA}; ijA <= kAcol; ijA++) {
           ThrusterSolver_B.A[ijA - 1] += ThrusterSolver_B.A[((jj + ijA) - jA) +
-            1] * -ThrusterSolver_B.smax_g;
+            1] * -ThrusterSolver_B.smax_m;
         }
       }
 
@@ -166,9 +166,9 @@ void ThrusterSolver::ThrusterSolver_inv(const real_T x[64], real_T y[64])
     for (d_k = 7; d_k >= 0; d_k--) {
       kAcol = d_k << 3;
       c_j = d_k + jA;
-      ThrusterSolver_B.smax_g = y[c_j];
-      if (ThrusterSolver_B.smax_g != 0.0) {
-        y[c_j] = ThrusterSolver_B.smax_g / ThrusterSolver_B.A[d_k + kAcol];
+      ThrusterSolver_B.smax_m = y[c_j];
+      if (ThrusterSolver_B.smax_m != 0.0) {
+        y[c_j] = ThrusterSolver_B.smax_m / ThrusterSolver_B.A[d_k + kAcol];
         for (int32_T ijA{0}; ijA < d_k; ijA++) {
           jj = ijA + jA;
           y[jj] -= ThrusterSolver_B.A[ijA + kAcol] * y[c_j];
@@ -409,11 +409,11 @@ void ThrusterSolver::ThrusterSo_SystemCore_setup_fam
   durability = RMW_QOS_POLICY_DURABILITY_VOLATILE;
   SET_QOS_VALUES(qos_profile, history, (size_t)1.0, durability, reliability);
   for (int32_T i{0}; i < 15; i++) {
-    ThrusterSolver_B.b_zeroDelimTopic_c[i] = tmp[i];
+    ThrusterSolver_B.b_zeroDelimTopic_f[i] = tmp[i];
   }
 
-  ThrusterSolver_B.b_zeroDelimTopic_c[15] = '\x00';
-  Pub_ThrusterSolver_226.createPublisher(&ThrusterSolver_B.b_zeroDelimTopic_c[0],
+  ThrusterSolver_B.b_zeroDelimTopic_f[15] = '\x00';
+  Pub_ThrusterSolver_226.createPublisher(&ThrusterSolver_B.b_zeroDelimTopic_f[0],
     qos_profile);
   obj->isSetupComplete = true;
 }
@@ -515,11 +515,11 @@ void ThrusterSolver::ThrusterS_SystemCore_setup_faml
   durability = RMW_QOS_POLICY_DURABILITY_VOLATILE;
   SET_QOS_VALUES(qos_profile, history, (size_t)1.0, durability, reliability);
   for (int32_T i{0}; i < 25; i++) {
-    ThrusterSolver_B.b_zeroDelimTopic_b[i] = tmp[i];
+    ThrusterSolver_B.b_zeroDelimTopic_p[i] = tmp[i];
   }
 
-  ThrusterSolver_B.b_zeroDelimTopic_b[25] = '\x00';
-  Sub_ThrusterSolver_272.createSubscriber(&ThrusterSolver_B.b_zeroDelimTopic_b[0],
+  ThrusterSolver_B.b_zeroDelimTopic_p[25] = '\x00';
+  Sub_ThrusterSolver_272.createSubscriber(&ThrusterSolver_B.b_zeroDelimTopic_p[0],
     qos_profile);
   obj->isSetupComplete = true;
 }
@@ -527,9 +527,9 @@ void ThrusterSolver::ThrusterS_SystemCore_setup_faml
 // Model step function
 void ThrusterSolver::step()
 {
+  int32_T enabled_thrusters;
   int32_T i;
-  int32_T jj;
-  int32_T k;
+  int32_T n;
   boolean_T b_varargout_1;
   boolean_T rtb_OR;
   boolean_T rtb_Recalculate;
@@ -539,17 +539,18 @@ void ThrusterSolver::step()
     &ThrusterSolver_B.len);
 
   // MATLABSystem: '<Root>/Scaling Factor'
-  ParamGet_ThrusterSolver_197.getParameter(&ThrusterSolver_B.value_n);
+  ParamGet_ThrusterSolver_197.getParameter(&ThrusterSolver_B.value_p);
 
   // Product: '<Root>/Divide1' incorporates:
   //   MATLABSystem: '<Root>/Get Thruster Wrench Matrix'
   //   MATLABSystem: '<Root>/Scaling Factor'
   //   Math: '<Root>/Transpose'
 
-  for (k = 0; k < 6; k++) {
-    for (jj = 0; jj < 8; jj++) {
-      ThrusterSolver_B.Divide1[jj + (k << 3)] = ThrusterSolver_B.value[6 * jj +
-        k] / static_cast<real_T>(ThrusterSolver_B.value_n);
+  for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++) {
+    for (n = 0; n < 8; n++) {
+      ThrusterSolver_B.Divide1[n + (enabled_thrusters << 3)] =
+        ThrusterSolver_B.value[6 * n + enabled_thrusters] / static_cast<real_T>
+        (ThrusterSolver_B.value_p);
     }
   }
 
@@ -584,10 +585,13 @@ void ThrusterSolver::step()
   // End of Outputs for SubSystem: '<S1>/Enabled Subsystem'
 
   // MATLABSystem: '<Root>/System Limit'
-  ParamGet_ThrusterSolver_148.getParameter(&ThrusterSolver_B.value_p);
+  ParamGet_ThrusterSolver_148.getParameter(&ThrusterSolver_B.value_l);
 
   // MATLABSystem: '<Root>/Individual Limit'
-  ParamGet_ThrusterSolver_147.getParameter(&ThrusterSolver_B.value_l);
+  ParamGet_ThrusterSolver_147.getParameter(&ThrusterSolver_B.value_j);
+
+  // MATLABSystem: '<Root>/Individual Limit1'
+  ParamGet_ThrusterSolver_327.getParameter(&ThrusterSolver_B.value_d);
 
   // MATLABSystem: '<S3>/Current Time'
   currentROS2TimeDouble(&ThrusterSolver_B.rtb_CurrentTime_g);
@@ -635,7 +639,7 @@ void ThrusterSolver::step()
   for (i = 0; i < 8; i++) {
     ThrusterSolver_B.DataTypeConversion[i] = static_cast<real_T>(div_s64_floor(
       static_cast<int64_T>(ThrusterSolver_B.In1.data[i]),
-      ThrusterSolver_B.value_n));
+      ThrusterSolver_B.value_p));
   }
 
   // End of DataTypeConversion: '<Root>/Data Type Conversion'
@@ -653,15 +657,16 @@ void ThrusterSolver::step()
 
     b_varargout_1 = false;
     b_p = true;
-    k = 0;
+    enabled_thrusters = 0;
     exitg1 = false;
-    while ((!exitg1) && (k < 8)) {
-      if (!(ThrusterSolver_B.DataTypeConversion[k] ==
-            ThrusterSolver_DW.PreviousWeights_PreviousInput[k])) {
+    while ((!exitg1) && (enabled_thrusters < 8)) {
+      if (!(ThrusterSolver_B.DataTypeConversion[enabled_thrusters] ==
+            ThrusterSolver_DW.PreviousWeights_PreviousInput[enabled_thrusters]))
+      {
         b_p = false;
         exitg1 = true;
       } else {
-        k++;
+        enabled_thrusters++;
       }
     }
 
@@ -672,80 +677,84 @@ void ThrusterSolver::step()
     if (!b_varargout_1) {
       int32_T e_k;
       int32_T jA;
-      int32_T kAcol;
       std::memset(&ThrusterSolver_B.weightsMatrix[0], 0, sizeof(real_T) << 6U);
-      for (k = 0; k < 8; k++) {
-        ThrusterSolver_B.weightsMatrix[k + (k << 3)] =
-          ThrusterSolver_B.DataTypeConversion[k];
+      for (enabled_thrusters = 0; enabled_thrusters < 8; enabled_thrusters++) {
+        ThrusterSolver_B.weightsMatrix[enabled_thrusters + (enabled_thrusters <<
+          3)] = ThrusterSolver_B.DataTypeConversion[enabled_thrusters];
       }
 
       ThrusterSolver_inv(ThrusterSolver_B.weightsMatrix, ThrusterSolver_B.A_tmp);
-      for (k = 0; k < 6; k++) {
-        for (jj = 0; jj < 8; jj++) {
-          i = 6 * jj + k;
-          ThrusterSolver_B.value[i] = 0.0;
-          for (jA = 0; jA < 8; jA++) {
-            ThrusterSolver_B.value[i] += ThrusterSolver_B.Divide1[(k << 3) + jA]
-              * ThrusterSolver_B.A_tmp[(jj << 3) + jA];
+      for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++) {
+        for (n = 0; n < 8; n++) {
+          jA = 6 * n + enabled_thrusters;
+          ThrusterSolver_B.value[jA] = 0.0;
+          for (i = 0; i < 8; i++) {
+            ThrusterSolver_B.value[jA] += ThrusterSolver_B.Divide1
+              [(enabled_thrusters << 3) + i] * ThrusterSolver_B.A_tmp[(n << 3) +
+              i];
           }
         }
 
-        for (jj = 0; jj < 6; jj++) {
-          i = 6 * jj + k;
-          ThrusterSolver_B.A_m[i] = 0.0;
-          for (jA = 0; jA < 8; jA++) {
-            ThrusterSolver_B.A_m[i] += ThrusterSolver_B.value[6 * jA + k] *
-              ThrusterSolver_B.Divide1[(jj << 3) + jA];
+        for (n = 0; n < 6; n++) {
+          jA = 6 * n + enabled_thrusters;
+          ThrusterSolver_B.A_m[jA] = 0.0;
+          for (i = 0; i < 8; i++) {
+            ThrusterSolver_B.A_m[jA] += ThrusterSolver_B.value[6 * i +
+              enabled_thrusters] * ThrusterSolver_B.Divide1[(n << 3) + i];
           }
         }
       }
 
       std::memset(&ThrusterSolver_B.b[0], 0, 36U * sizeof(real_T));
-      for (k = 0; k < 6; k++) {
-        ThrusterSolver_B.ipiv_j[k] = static_cast<int8_T>(k + 1);
+      for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++) {
+        ThrusterSolver_B.ipiv_g[enabled_thrusters] = static_cast<int8_T>
+          (enabled_thrusters + 1);
       }
 
-      for (k = 0; k < 5; k++) {
-        jj = k * 7;
-        i = 6 - k;
+      for (enabled_thrusters = 0; enabled_thrusters < 5; enabled_thrusters++) {
+        i = enabled_thrusters * 7;
+        n = 6 - enabled_thrusters;
         jA = 0;
-        ThrusterSolver_B.smax = std::abs(ThrusterSolver_B.A_m[jj]);
-        for (e_k = 2; e_k <= i; e_k++) {
-          ThrusterSolver_B.s = std::abs(ThrusterSolver_B.A_m[(jj + e_k) - 1]);
+        ThrusterSolver_B.smax = std::abs(ThrusterSolver_B.A_m[i]);
+        for (e_k = 2; e_k <= n; e_k++) {
+          ThrusterSolver_B.s = std::abs(ThrusterSolver_B.A_m[(i + e_k) - 1]);
           if (ThrusterSolver_B.s > ThrusterSolver_B.smax) {
             jA = e_k - 1;
             ThrusterSolver_B.smax = ThrusterSolver_B.s;
           }
         }
 
-        if (ThrusterSolver_B.A_m[jj + jA] != 0.0) {
+        if (ThrusterSolver_B.A_m[i + jA] != 0.0) {
           if (jA != 0) {
-            jA += k;
-            ThrusterSolver_B.ipiv_j[k] = static_cast<int8_T>(jA + 1);
+            n = enabled_thrusters + jA;
+            ThrusterSolver_B.ipiv_g[enabled_thrusters] = static_cast<int8_T>(n +
+              1);
             for (e_k = 0; e_k < 6; e_k++) {
-              kAcol = e_k * 6 + k;
-              ThrusterSolver_B.smax = ThrusterSolver_B.A_m[kAcol];
-              i = e_k * 6 + jA;
-              ThrusterSolver_B.A_m[kAcol] = ThrusterSolver_B.A_m[i];
-              ThrusterSolver_B.A_m[i] = ThrusterSolver_B.smax;
+              ThrusterSolver_B.kAcol = e_k * 6 + enabled_thrusters;
+              ThrusterSolver_B.smax =
+                ThrusterSolver_B.A_m[ThrusterSolver_B.kAcol];
+              jA = e_k * 6 + n;
+              ThrusterSolver_B.A_m[ThrusterSolver_B.kAcol] =
+                ThrusterSolver_B.A_m[jA];
+              ThrusterSolver_B.A_m[jA] = ThrusterSolver_B.smax;
             }
           }
 
-          i = (jj - k) + 6;
-          for (jA = jj + 2; jA <= i; jA++) {
-            ThrusterSolver_B.A_m[jA - 1] /= ThrusterSolver_B.A_m[jj];
+          n = (i - enabled_thrusters) + 6;
+          for (jA = i + 2; jA <= n; jA++) {
+            ThrusterSolver_B.A_m[jA - 1] /= ThrusterSolver_B.A_m[i];
           }
         }
 
-        i = 4 - k;
-        jA = jj + 8;
-        for (e_k = 0; e_k <= i; e_k++) {
-          ThrusterSolver_B.s = ThrusterSolver_B.A_m[(e_k * 6 + jj) + 6];
-          if (ThrusterSolver_B.s != 0.0) {
-            kAcol = (jA - k) + 4;
-            for (int32_T ijA{jA}; ijA <= kAcol; ijA++) {
-              ThrusterSolver_B.A_m[ijA - 1] += ThrusterSolver_B.A_m[((jj + ijA)
-                - jA) + 1] * -ThrusterSolver_B.s;
+        n = 4 - enabled_thrusters;
+        jA = i + 8;
+        for (e_k = 0; e_k <= n; e_k++) {
+          ThrusterSolver_B.smax = ThrusterSolver_B.A_m[(e_k * 6 + i) + 6];
+          if (ThrusterSolver_B.smax != 0.0) {
+            ThrusterSolver_B.kAcol = (jA - enabled_thrusters) + 4;
+            for (int32_T ijA{jA}; ijA <= ThrusterSolver_B.kAcol; ijA++) {
+              ThrusterSolver_B.A_m[ijA - 1] += ThrusterSolver_B.A_m[((i + ijA) -
+                jA) + 1] * -ThrusterSolver_B.smax;
             }
           }
 
@@ -753,30 +762,33 @@ void ThrusterSolver::step()
         }
       }
 
-      for (k = 0; k < 6; k++) {
-        ThrusterSolver_B.c_p[k] = static_cast<int8_T>(k + 1);
+      for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++) {
+        ThrusterSolver_B.c_p[enabled_thrusters] = static_cast<int8_T>
+          (enabled_thrusters + 1);
       }
 
-      for (k = 0; k < 5; k++) {
+      for (enabled_thrusters = 0; enabled_thrusters < 5; enabled_thrusters++) {
         int8_T ipiv;
-        ipiv = ThrusterSolver_B.ipiv_j[k];
-        if (ipiv > k + 1) {
-          jj = ThrusterSolver_B.c_p[ipiv - 1];
-          ThrusterSolver_B.c_p[ipiv - 1] = ThrusterSolver_B.c_p[k];
-          ThrusterSolver_B.c_p[k] = static_cast<int8_T>(jj);
+        ipiv = ThrusterSolver_B.ipiv_g[enabled_thrusters];
+        if (ipiv > enabled_thrusters + 1) {
+          i = ThrusterSolver_B.c_p[ipiv - 1];
+          ThrusterSolver_B.c_p[ipiv - 1] =
+            ThrusterSolver_B.c_p[enabled_thrusters];
+          ThrusterSolver_B.c_p[enabled_thrusters] = static_cast<int8_T>(i);
         }
       }
 
       for (jA = 0; jA < 6; jA++) {
-        jj = (ThrusterSolver_B.c_p[jA] - 1) * 6;
-        ThrusterSolver_B.b[jA + jj] = 1.0;
+        n = (ThrusterSolver_B.c_p[jA] - 1) * 6;
+        ThrusterSolver_B.b[jA + n] = 1.0;
         for (e_k = jA + 1; e_k < 7; e_k++) {
-          k = (jj + e_k) - 1;
-          if (ThrusterSolver_B.b[k] != 0.0) {
+          enabled_thrusters = (n + e_k) - 1;
+          if (ThrusterSolver_B.b[enabled_thrusters] != 0.0) {
             for (i = e_k + 1; i < 7; i++) {
-              kAcol = (jj + i) - 1;
-              ThrusterSolver_B.b[kAcol] -= ThrusterSolver_B.A_m[((e_k - 1) * 6 +
-                i) - 1] * ThrusterSolver_B.b[k];
+              ThrusterSolver_B.kAcol = (n + i) - 1;
+              ThrusterSolver_B.b[ThrusterSolver_B.kAcol] -=
+                ThrusterSolver_B.A_m[((e_k - 1) * 6 + i) - 1] *
+                ThrusterSolver_B.b[enabled_thrusters];
             }
           }
         }
@@ -785,39 +797,41 @@ void ThrusterSolver::step()
       for (i = 0; i < 6; i++) {
         jA = 6 * i;
         for (e_k = 5; e_k >= 0; e_k--) {
-          kAcol = 6 * e_k;
-          k = e_k + jA;
-          ThrusterSolver_B.s = ThrusterSolver_B.b[k];
-          if (ThrusterSolver_B.s != 0.0) {
-            ThrusterSolver_B.b[k] = ThrusterSolver_B.s /
-              ThrusterSolver_B.A_m[e_k + kAcol];
+          ThrusterSolver_B.kAcol = 6 * e_k;
+          enabled_thrusters = e_k + jA;
+          ThrusterSolver_B.smax = ThrusterSolver_B.b[enabled_thrusters];
+          if (ThrusterSolver_B.smax != 0.0) {
+            ThrusterSolver_B.b[enabled_thrusters] = ThrusterSolver_B.smax /
+              ThrusterSolver_B.A_m[e_k + ThrusterSolver_B.kAcol];
             for (int32_T ijA{0}; ijA < e_k; ijA++) {
-              jj = ijA + jA;
-              ThrusterSolver_B.b[jj] -= ThrusterSolver_B.A_m[ijA + kAcol] *
-                ThrusterSolver_B.b[k];
+              n = ijA + jA;
+              ThrusterSolver_B.b[n] -= ThrusterSolver_B.A_m[ijA +
+                ThrusterSolver_B.kAcol] * ThrusterSolver_B.b[enabled_thrusters];
             }
           }
         }
       }
 
       for (i = 0; i < 8; i++) {
-        for (k = 0; k < 6; k++) {
-          jA = k << 3;
+        for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++)
+        {
+          jA = enabled_thrusters << 3;
           e_k = i + jA;
           ThrusterSolver_B.value[e_k] = 0.0;
-          for (jj = 0; jj < 8; jj++) {
-            ThrusterSolver_B.value[e_k] += ThrusterSolver_B.A_tmp[(jj << 3) + i]
-              * ThrusterSolver_B.Divide1[jA + jj];
+          for (n = 0; n < 8; n++) {
+            ThrusterSolver_B.value[e_k] += ThrusterSolver_B.A_tmp[(n << 3) + i] *
+              ThrusterSolver_B.Divide1[jA + n];
           }
         }
 
-        for (k = 0; k < 6; k++) {
-          jA = (k << 3) + i;
+        for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++)
+        {
+          jA = (enabled_thrusters << 3) + i;
           ThrusterSolver_DW.PreviousBMatrix_PreviousInput[jA] = 0.0;
-          for (jj = 0; jj < 6; jj++) {
+          for (n = 0; n < 6; n++) {
             ThrusterSolver_DW.PreviousBMatrix_PreviousInput[jA] +=
-              ThrusterSolver_B.value[(jj << 3) + i] * ThrusterSolver_B.b[6 * k +
-              jj];
+              ThrusterSolver_B.value[(n << 3) + i] * ThrusterSolver_B.b[6 *
+              enabled_thrusters + n];
           }
         }
 
@@ -828,130 +842,180 @@ void ThrusterSolver::step()
 
     // End of MATLAB Function: '<S7>/MATLAB Function'
 
-    // Product: '<S7>/Overall System' incorporates:
-    //   SignalConversion generated from: '<S7>/Overall System'
+    // MATLAB Function: '<S7>/Check Fully Actuated' incorporates:
+    //   MATLABSystem: '<Root>/Individual Limit1'
+    //   Product: '<Root>/Divide1'
 
-    ThrusterSolver_B.dv[0] = ThrusterSolver_B.In1_g.linear.x;
-    ThrusterSolver_B.dv[1] = ThrusterSolver_B.In1_g.linear.y;
-    ThrusterSolver_B.dv[2] = ThrusterSolver_B.In1_g.linear.z;
-    ThrusterSolver_B.dv[3] = ThrusterSolver_B.In1_g.angular.x;
-    ThrusterSolver_B.dv[4] = ThrusterSolver_B.In1_g.angular.y;
-    ThrusterSolver_B.dv[5] = ThrusterSolver_B.In1_g.angular.z;
-
-    // Product: '<S7>/Feed Forward ' incorporates:
-    //   SignalConversion generated from: '<S7>/Feed Forward '
-
-    ThrusterSolver_B.dv1[0] = ThrusterSolver_B.In1_n.linear.x;
-    ThrusterSolver_B.dv1[1] = ThrusterSolver_B.In1_n.linear.y;
-    ThrusterSolver_B.dv1[2] = ThrusterSolver_B.In1_n.linear.z;
-    ThrusterSolver_B.dv1[3] = ThrusterSolver_B.In1_n.angular.x;
-    ThrusterSolver_B.dv1[4] = ThrusterSolver_B.In1_n.angular.y;
-    ThrusterSolver_B.dv1[5] = ThrusterSolver_B.In1_n.angular.z;
-
-    // Sum: '<S7>/Feed Forward Sys'
-    ThrusterSolver_B.s = -0.0;
-
-    // Sum: '<S7>/Active Sys'
-    ThrusterSolver_B.smax = -0.0;
-    for (k = 0; k < 8; k++) {
-      // Product: '<S7>/Overall System' incorporates:
-      //   Concatenate: '<S5>/Vector Concatenate'
-
-      ThrusterSolver_B.RPMs[k] = 0.0;
-
-      // Product: '<S7>/Feed Forward ' incorporates:
-      //   Concatenate: '<S5>/Vector Concatenate1'
-
-      ThrusterSolver_B.DataTypeConversion[k] = 0.0;
-      for (jj = 0; jj < 6; jj++) {
-        // Product: '<S7>/Overall System' incorporates:
-        //   Concatenate: '<S5>/Vector Concatenate'
-        //   Product: '<S7>/Feed Forward '
-
-        ThrusterSolver_B.rtb_VectorConcatenate_tmp =
-          ThrusterSolver_DW.PreviousBMatrix_PreviousInput[(jj << 3) + k];
-        ThrusterSolver_B.RPMs[k] += ThrusterSolver_B.rtb_VectorConcatenate_tmp *
-          ThrusterSolver_B.dv[jj];
-
-        // Product: '<S7>/Feed Forward ' incorporates:
-        //   Concatenate: '<S5>/Vector Concatenate1'
-
-        ThrusterSolver_B.DataTypeConversion[k] +=
-          ThrusterSolver_B.rtb_VectorConcatenate_tmp * ThrusterSolver_B.dv1[jj];
+    enabled_thrusters = 0;
+    for (i = 0; i < 8; i++) {
+      ThrusterSolver_B.smax = ThrusterSolver_B.Divide1[i];
+      b_varargout_1 = false;
+      if ((!(ThrusterSolver_B.smax >= -9.2233720368547758E+18)) ||
+          (!(ThrusterSolver_B.smax < 9.2233720368547758E+18))) {
+        b_varargout_1 = (ThrusterSolver_B.smax < 0.0);
+      } else {
+        boolean_T asmall;
+        boolean_T tmp;
+        boolean_T tmp_0;
+        b_p = (ThrusterSolver_B.value_d >= 4503599627370496L);
+        asmall = (ThrusterSolver_B.smax <= -4.503599627370496E+15);
+        tmp = !(ThrusterSolver_B.smax >= 4.503599627370496E+15);
+        tmp_0 = (ThrusterSolver_B.value_d > -4503599627370496L);
+        if ((tmp && b_p) || (asmall && tmp_0)) {
+          b_varargout_1 = true;
+        } else if (b_p || asmall) {
+          b_varargout_1 = (static_cast<int64_T>(std::round(ThrusterSolver_B.smax))
+                           < ThrusterSolver_B.value_d);
+        } else if (tmp && tmp_0) {
+          b_varargout_1 = (ThrusterSolver_B.smax < ThrusterSolver_B.value_d);
+        }
       }
 
-      // Sum: '<S7>/Individual Allocation' incorporates:
-      //   Concatenate: '<S5>/Vector Concatenate'
-      //   Concatenate: '<S5>/Vector Concatenate1'
-      //   MATLABSystem: '<Root>/Individual Limit'
+      if (b_varargout_1) {
+        enabled_thrusters++;
+      }
+    }
+
+    // Switch: '<S7>/Switch' incorporates:
+    //   MATLAB Function: '<S7>/Check Fully Actuated'
+
+    if (static_cast<real_T>(enabled_thrusters >= 6) >
+        ThrusterSolver_P.Switch_Threshold) {
+      // Product: '<S7>/Feed Forward ' incorporates:
+      //   SignalConversion generated from: '<S7>/Feed Forward '
+
+      ThrusterSolver_B.dv[0] = ThrusterSolver_B.In1_n.linear.x;
+      ThrusterSolver_B.dv[1] = ThrusterSolver_B.In1_n.linear.y;
+      ThrusterSolver_B.dv[2] = ThrusterSolver_B.In1_n.linear.z;
+      ThrusterSolver_B.dv[3] = ThrusterSolver_B.In1_n.angular.x;
+      ThrusterSolver_B.dv[4] = ThrusterSolver_B.In1_n.angular.y;
+      ThrusterSolver_B.dv[5] = ThrusterSolver_B.In1_n.angular.z;
+
+      // Product: '<S7>/Overall System' incorporates:
+      //   SignalConversion generated from: '<S7>/Overall System'
+
+      ThrusterSolver_B.dv1[0] = ThrusterSolver_B.In1_g.linear.x;
+      ThrusterSolver_B.dv1[1] = ThrusterSolver_B.In1_g.linear.y;
+      ThrusterSolver_B.dv1[2] = ThrusterSolver_B.In1_g.linear.z;
+      ThrusterSolver_B.dv1[3] = ThrusterSolver_B.In1_g.angular.x;
+      ThrusterSolver_B.dv1[4] = ThrusterSolver_B.In1_g.angular.y;
+      ThrusterSolver_B.dv1[5] = ThrusterSolver_B.In1_g.angular.z;
+      for (i = 0; i < 8; i++) {
+        // Product: '<S7>/Feed Forward '
+        ThrusterSolver_B.Switch[i] = 0.0;
+
+        // Product: '<S7>/Overall System'
+        ThrusterSolver_B.OverallSystem[i] = 0.0;
+        for (enabled_thrusters = 0; enabled_thrusters < 6; enabled_thrusters++)
+        {
+          // Product: '<S7>/Feed Forward ' incorporates:
+          //   Product: '<S7>/Overall System'
+
+          ThrusterSolver_B.smax =
+            ThrusterSolver_DW.PreviousBMatrix_PreviousInput[(enabled_thrusters <<
+            3) + i];
+          ThrusterSolver_B.Switch[i] += ThrusterSolver_B.smax *
+            ThrusterSolver_B.dv[enabled_thrusters];
+          ThrusterSolver_B.OverallSystem[i] += ThrusterSolver_B.smax *
+            ThrusterSolver_B.dv1[enabled_thrusters];
+        }
+
+        // Sum: '<S7>/Individual Allocation' incorporates:
+        //   MATLABSystem: '<Root>/Individual Limit'
+        //   Product: '<S7>/Feed Forward '
+        //   Product: '<S7>/Overall System'
+
+        ThrusterSolver_B.smax = static_cast<real_T>(ThrusterSolver_B.value_j) -
+          ThrusterSolver_B.Switch[i];
+        ThrusterSolver_B.DataTypeConversion[i] =
+          (ThrusterSolver_B.OverallSystem[i] - ThrusterSolver_B.smax) /
+          ThrusterSolver_B.smax;
+      }
+
+      // MinMax: '<S7>/Max Individual Overuse' incorporates:
       //   Product: '<S7>/Individual Overuse Mutliplier'
+      //   Product: '<S7>/Overall System'
+      //   Sum: '<S7>/Individual Allocation'
       //   Sum: '<S7>/Individual Overuse'
 
-      ThrusterSolver_B.rtb_VectorConcatenate_tmp = static_cast<real_T>
-        (ThrusterSolver_B.value_l) - ThrusterSolver_B.DataTypeConversion[k];
-      ThrusterSolver_B.value[k] = (ThrusterSolver_B.RPMs[k] -
-        ThrusterSolver_B.rtb_VectorConcatenate_tmp) /
-        ThrusterSolver_B.rtb_VectorConcatenate_tmp;
+      ThrusterSolver_B.s = ThrusterSolver_B.DataTypeConversion[0];
+      for (enabled_thrusters = 0; enabled_thrusters < 7; enabled_thrusters++) {
+        ThrusterSolver_B.s = std::fmax(ThrusterSolver_B.s,
+          ThrusterSolver_B.DataTypeConversion[enabled_thrusters + 1]);
+      }
 
-      // Sum: '<S7>/Feed Forward Sys' incorporates:
-      //   Concatenate: '<S5>/Vector Concatenate1'
+      // Sum: '<S7>/Active Sys'
+      ThrusterSolver_B.smax = -0.0;
 
-      ThrusterSolver_B.s += ThrusterSolver_B.DataTypeConversion[k];
+      // Sum: '<S7>/Feed Forward Sys'
+      ThrusterSolver_B.ApplyOveruse = -0.0;
+      for (enabled_thrusters = 0; enabled_thrusters < 8; enabled_thrusters++) {
+        // Sum: '<S7>/Active Sys' incorporates:
+        //   Product: '<S7>/Overall System'
 
-      // Sum: '<S7>/Active Sys' incorporates:
-      //   Concatenate: '<S5>/Vector Concatenate'
+        ThrusterSolver_B.smax +=
+          ThrusterSolver_B.OverallSystem[enabled_thrusters];
 
-      ThrusterSolver_B.smax += ThrusterSolver_B.RPMs[k];
-    }
+        // Sum: '<S7>/Feed Forward Sys' incorporates:
+        //   Product: '<S7>/Feed Forward '
 
-    // Sum: '<S7>/System Allocation' incorporates:
-    //   MATLABSystem: '<Root>/System Limit'
-    //   Sum: '<S7>/Feed Forward Sys'
+        ThrusterSolver_B.ApplyOveruse +=
+          ThrusterSolver_B.Switch[enabled_thrusters];
+      }
 
-    ThrusterSolver_B.s = static_cast<real_T>(ThrusterSolver_B.value_p) -
-      ThrusterSolver_B.s;
+      // Sum: '<S7>/System Allocation' incorporates:
+      //   MATLABSystem: '<Root>/System Limit'
+      //   Sum: '<S7>/Feed Forward Sys'
 
-    // Product: '<S7>/Overuse Multiplier' incorporates:
-    //   Sum: '<S7>/Active Sys'
-    //   Sum: '<S7>/System Overuse'
+      ThrusterSolver_B.ApplyOveruse = static_cast<real_T>
+        (ThrusterSolver_B.value_l) - ThrusterSolver_B.ApplyOveruse;
 
-    ThrusterSolver_B.s = (ThrusterSolver_B.smax - ThrusterSolver_B.s) /
-      ThrusterSolver_B.s;
+      // MinMax: '<S7>/Max Overuse Multiplier' incorporates:
+      //   MinMax: '<S7>/Max Individual Overuse'
+      //   Product: '<S7>/Overuse Multiplier'
+      //   Sum: '<S7>/Active Sys'
+      //   Sum: '<S7>/System Overuse'
 
-    // MinMax: '<S7>/Max Individual Overuse'
-    ThrusterSolver_B.smax = ThrusterSolver_B.value[0];
-    for (k = 0; k < 7; k++) {
-      ThrusterSolver_B.smax = std::fmax(ThrusterSolver_B.smax,
-        ThrusterSolver_B.value[k + 1]);
-    }
+      ThrusterSolver_B.ApplyOveruse = std::fmax((ThrusterSolver_B.smax -
+        ThrusterSolver_B.ApplyOveruse) / ThrusterSolver_B.ApplyOveruse,
+        ThrusterSolver_B.s);
 
-    // MinMax: '<S7>/Max Overuse Multiplier' incorporates:
-    //   MinMax: '<S7>/Max Individual Overuse'
+      // Switch: '<S7>/Apply Overuse' incorporates:
+      //   Constant: '<S7>/Constant'
 
-    ThrusterSolver_B.s = std::fmax(ThrusterSolver_B.s, ThrusterSolver_B.smax);
+      if (!(ThrusterSolver_B.ApplyOveruse >
+            ThrusterSolver_P.ApplyOveruse_Threshold)) {
+        ThrusterSolver_B.ApplyOveruse = ThrusterSolver_P.Constant_Value_n;
+      }
 
-    // Switch: '<S7>/Apply Overuse' incorporates:
-    //   Constant: '<S7>/Constant'
+      // Sum: '<S7>/Add' incorporates:
+      //   Constant: '<S7>/Constant1'
+      //   Switch: '<S7>/Apply Overuse'
 
-    if (!(ThrusterSolver_B.s > ThrusterSolver_P.ApplyOveruse_Threshold)) {
-      ThrusterSolver_B.s = ThrusterSolver_P.Constant_Value_n;
-    }
+      ThrusterSolver_B.smax = ThrusterSolver_B.ApplyOveruse +
+        ThrusterSolver_P.Constant1_Value_m;
 
-    // Sum: '<S7>/Add' incorporates:
-    //   Constant: '<S7>/Constant1'
-    //   Switch: '<S7>/Apply Overuse'
-
-    ThrusterSolver_B.smax = ThrusterSolver_B.s +
-      ThrusterSolver_P.Constant1_Value_m;
-    for (i = 0; i < 8; i++) {
-      // Sum: '<S7>/Add Feed Forward' incorporates:
-      //   Concatenate: '<S5>/Vector Concatenate'
-      //   Concatenate: '<S5>/Vector Concatenate1'
+      // Switch: '<S7>/Switch' incorporates:
       //   Product: '<S7>/Apply Multiplier'
+      //   Product: '<S7>/Feed Forward '
+      //   Product: '<S7>/Overall System'
+      //   Sum: '<S7>/Add Feed Forward'
 
-      ThrusterSolver_B.AddFeedForward[i] = ThrusterSolver_B.RPMs[i] /
-        ThrusterSolver_B.smax + ThrusterSolver_B.DataTypeConversion[i];
+      for (enabled_thrusters = 0; enabled_thrusters < 8; enabled_thrusters++) {
+        ThrusterSolver_B.Switch[enabled_thrusters] +=
+          ThrusterSolver_B.OverallSystem[enabled_thrusters] /
+          ThrusterSolver_B.smax;
+      }
+    } else {
+      // Switch: '<S7>/Switch' incorporates:
+      //   Constant: '<S7>/No Force'
+      //   Product: '<S7>/Feed Forward '
+
+      std::memcpy(&ThrusterSolver_B.Switch[0], &ThrusterSolver_P.NoForce_Value[0],
+                  sizeof(real_T) << 3U);
     }
+
+    // End of Switch: '<S7>/Switch'
   }
 
   ThrusterSolver_PrevZCX.ThrusterSolver_Trig_ZCE = rtb_OR;
@@ -960,11 +1024,11 @@ void ThrusterSolver::step()
 
   // Product: '<Root>/Apply Scaling' incorporates:
   //   MATLABSystem: '<Root>/Scaling Factor'
-  //   Sum: '<S7>/Add Feed Forward'
+  //   Switch: '<S7>/Switch'
 
   for (i = 0; i < 8; i++) {
-    ThrusterSolver_B.DataTypeConversion[i] = ThrusterSolver_B.AddFeedForward[i] *
-      static_cast<real_T>(ThrusterSolver_B.value_n);
+    ThrusterSolver_B.OverallSystem[i] = ThrusterSolver_B.Switch[i] *
+      static_cast<real_T>(ThrusterSolver_B.value_p);
   }
 
   // End of Product: '<Root>/Apply Scaling'
@@ -977,93 +1041,92 @@ void ThrusterSolver::step()
   //   MATLABSystem: '<Root>/Force To RPM Curve Parameters'
   //   MATLABSystem: '<Root>/Scaling Factor'
 
-  for (k = 0; k < 8; k++) {
-    ThrusterSolver_B.value_c[k] = div_s64_floor(ThrusterSolver_B.value_c[k],
-      ThrusterSolver_B.value_n);
+  for (enabled_thrusters = 0; enabled_thrusters < 8; enabled_thrusters++) {
+    ThrusterSolver_B.value_c[enabled_thrusters] = div_s64_floor
+      (ThrusterSolver_B.value_c[enabled_thrusters], ThrusterSolver_B.value_p);
   }
 
   // End of Product: '<Root>/Apply Scaling Factor'
 
   // MATLAB Function: '<Root>/Force to RPM Transform' incorporates:
   //   Product: '<Root>/Apply Scaling Factor'
-  //   Sum: '<S7>/Add Feed Forward'
 
   for (i = 0; i < 8; i++) {
-    if (ThrusterSolver_B.AddFeedForward[i] > 0.0) {
-      ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_c[1],
-        ThrusterSolver_B.AddFeedForward[i]);
-      if ((ThrusterSolver_B.value_c[0] < 0L) && (ThrusterSolver_B.value_n <
+    if (ThrusterSolver_B.Switch[i] > 0.0) {
+      ThrusterSolver_B.value_p = ThrusterSolver_times(ThrusterSolver_B.value_c[1],
+        ThrusterSolver_B.Switch[i]);
+      if ((ThrusterSolver_B.value_c[0] < 0L) && (ThrusterSolver_B.value_p <
            MIN_int64_T - ThrusterSolver_B.value_c[0])) {
-        ThrusterSolver_B.value_p = MIN_int64_T;
-      } else if ((ThrusterSolver_B.value_c[0] > 0L) && (ThrusterSolver_B.value_n
+        ThrusterSolver_B.value_l = MIN_int64_T;
+      } else if ((ThrusterSolver_B.value_c[0] > 0L) && (ThrusterSolver_B.value_p
                   > MAX_int64_T - ThrusterSolver_B.value_c[0])) {
-        ThrusterSolver_B.value_p = MAX_int64_T;
+        ThrusterSolver_B.value_l = MAX_int64_T;
       } else {
-        ThrusterSolver_B.value_p = ThrusterSolver_B.value_c[0] +
-          ThrusterSolver_B.value_n;
+        ThrusterSolver_B.value_l = ThrusterSolver_B.value_c[0] +
+          ThrusterSolver_B.value_p;
       }
 
-      ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_c[2],
-        std::tanh(ThrusterSolver_B.AddFeedForward[i]));
-      if ((ThrusterSolver_B.value_p < 0L) && (ThrusterSolver_B.value_n <
-           MIN_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.value_p = MIN_int64_T;
-      } else if ((ThrusterSolver_B.value_p > 0L) && (ThrusterSolver_B.value_n >
-                  MAX_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.value_p = MAX_int64_T;
+      ThrusterSolver_B.value_p = ThrusterSolver_times(ThrusterSolver_B.value_c[2],
+        std::tanh(ThrusterSolver_B.Switch[i]));
+      if ((ThrusterSolver_B.value_l < 0L) && (ThrusterSolver_B.value_p <
+           MIN_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.value_l = MIN_int64_T;
+      } else if ((ThrusterSolver_B.value_l > 0L) && (ThrusterSolver_B.value_p >
+                  MAX_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.value_l = MAX_int64_T;
       } else {
-        ThrusterSolver_B.value_p += ThrusterSolver_B.value_n;
+        ThrusterSolver_B.value_l += ThrusterSolver_B.value_p;
       }
 
-      ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_c[3],
-        rt_powd_snf(ThrusterSolver_B.AddFeedForward[i], 0.25));
-      if ((ThrusterSolver_B.value_p < 0L) && (ThrusterSolver_B.value_n <
-           MIN_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.RPMs[i] = -9.2233720368547758E+18;
-      } else if ((ThrusterSolver_B.value_p > 0L) && (ThrusterSolver_B.value_n >
-                  MAX_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.RPMs[i] = 9.2233720368547758E+18;
+      ThrusterSolver_B.value_p = ThrusterSolver_times(ThrusterSolver_B.value_c[3],
+        rt_powd_snf(ThrusterSolver_B.Switch[i], 0.25));
+      if ((ThrusterSolver_B.value_l < 0L) && (ThrusterSolver_B.value_p <
+           MIN_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.DataTypeConversion[i] = -9.2233720368547758E+18;
+      } else if ((ThrusterSolver_B.value_l > 0L) && (ThrusterSolver_B.value_p >
+                  MAX_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.DataTypeConversion[i] = 9.2233720368547758E+18;
       } else {
-        ThrusterSolver_B.RPMs[i] = static_cast<real_T>(ThrusterSolver_B.value_p
-          + ThrusterSolver_B.value_n);
+        ThrusterSolver_B.DataTypeConversion[i] = static_cast<real_T>
+          (ThrusterSolver_B.value_l + ThrusterSolver_B.value_p);
       }
     } else {
-      ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_c[5],
-        ThrusterSolver_B.AddFeedForward[i]);
-      if ((ThrusterSolver_B.value_c[4] < 0L) && (ThrusterSolver_B.value_n <
+      ThrusterSolver_B.value_p = ThrusterSolver_times(ThrusterSolver_B.value_c[5],
+        ThrusterSolver_B.Switch[i]);
+      if ((ThrusterSolver_B.value_c[4] < 0L) && (ThrusterSolver_B.value_p <
            MIN_int64_T - ThrusterSolver_B.value_c[4])) {
-        ThrusterSolver_B.value_p = MIN_int64_T;
-      } else if ((ThrusterSolver_B.value_c[4] > 0L) && (ThrusterSolver_B.value_n
+        ThrusterSolver_B.value_l = MIN_int64_T;
+      } else if ((ThrusterSolver_B.value_c[4] > 0L) && (ThrusterSolver_B.value_p
                   > MAX_int64_T - ThrusterSolver_B.value_c[4])) {
-        ThrusterSolver_B.value_p = MAX_int64_T;
+        ThrusterSolver_B.value_l = MAX_int64_T;
       } else {
-        ThrusterSolver_B.value_p = ThrusterSolver_B.value_c[4] +
-          ThrusterSolver_B.value_n;
+        ThrusterSolver_B.value_l = ThrusterSolver_B.value_c[4] +
+          ThrusterSolver_B.value_p;
       }
 
-      ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_c[6],
-        std::tanh(ThrusterSolver_B.AddFeedForward[i]));
-      if ((ThrusterSolver_B.value_p < 0L) && (ThrusterSolver_B.value_n <
-           MIN_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.value_p = MIN_int64_T;
-      } else if ((ThrusterSolver_B.value_p > 0L) && (ThrusterSolver_B.value_n >
-                  MAX_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.value_p = MAX_int64_T;
+      ThrusterSolver_B.value_p = ThrusterSolver_times(ThrusterSolver_B.value_c[6],
+        std::tanh(ThrusterSolver_B.Switch[i]));
+      if ((ThrusterSolver_B.value_l < 0L) && (ThrusterSolver_B.value_p <
+           MIN_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.value_l = MIN_int64_T;
+      } else if ((ThrusterSolver_B.value_l > 0L) && (ThrusterSolver_B.value_p >
+                  MAX_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.value_l = MAX_int64_T;
       } else {
-        ThrusterSolver_B.value_p += ThrusterSolver_B.value_n;
+        ThrusterSolver_B.value_l += ThrusterSolver_B.value_p;
       }
 
-      ThrusterSolver_B.value_n = ThrusterSolver_times(ThrusterSolver_B.value_c[7],
-        rt_powd_snf(std::abs(ThrusterSolver_B.AddFeedForward[i]), 0.25));
-      if ((ThrusterSolver_B.value_p < 0L) && (ThrusterSolver_B.value_n <
-           MIN_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.RPMs[i] = -9.2233720368547758E+18;
-      } else if ((ThrusterSolver_B.value_p > 0L) && (ThrusterSolver_B.value_n >
-                  MAX_int64_T - ThrusterSolver_B.value_p)) {
-        ThrusterSolver_B.RPMs[i] = 9.2233720368547758E+18;
+      ThrusterSolver_B.value_p = ThrusterSolver_times(ThrusterSolver_B.value_c[7],
+        rt_powd_snf(std::abs(ThrusterSolver_B.Switch[i]), 0.25));
+      if ((ThrusterSolver_B.value_l < 0L) && (ThrusterSolver_B.value_p <
+           MIN_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.DataTypeConversion[i] = -9.2233720368547758E+18;
+      } else if ((ThrusterSolver_B.value_l > 0L) && (ThrusterSolver_B.value_p >
+                  MAX_int64_T - ThrusterSolver_B.value_l)) {
+        ThrusterSolver_B.DataTypeConversion[i] = 9.2233720368547758E+18;
       } else {
-        ThrusterSolver_B.RPMs[i] = static_cast<real_T>(ThrusterSolver_B.value_p
-          + ThrusterSolver_B.value_n);
+        ThrusterSolver_B.DataTypeConversion[i] = static_cast<real_T>
+          (ThrusterSolver_B.value_l + ThrusterSolver_B.value_p);
       }
     }
   }
@@ -1077,16 +1140,17 @@ void ThrusterSolver::step()
     // DataTypeConversion: '<S5>/Data Type Conversion4' incorporates:
     //   Constant: '<S5>/Constant2'
 
-    ThrusterSolver_B.s = std::floor(ThrusterSolver_P.Constant2_Value);
-    if (std::isnan(ThrusterSolver_B.s) || std::isinf(ThrusterSolver_B.s)) {
-      ThrusterSolver_B.s = 0.0;
+    ThrusterSolver_B.smax = std::floor(ThrusterSolver_P.Constant2_Value);
+    if (std::isnan(ThrusterSolver_B.smax) || std::isinf(ThrusterSolver_B.smax))
+    {
+      ThrusterSolver_B.smax = 0.0;
     } else {
-      ThrusterSolver_B.s = std::fmod(ThrusterSolver_B.s, 4.294967296E+9);
+      ThrusterSolver_B.smax = std::fmod(ThrusterSolver_B.smax, 4.294967296E+9);
     }
 
-    ThrusterSolver_B.len = ThrusterSolver_B.s < 0.0 ? static_cast<uint32_T>(-
-      static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.s))) :
-      static_cast<uint32_T>(ThrusterSolver_B.s);
+    ThrusterSolver_B.len = ThrusterSolver_B.smax < 0.0 ? static_cast<uint32_T>(-
+      static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.smax))) :
+      static_cast<uint32_T>(ThrusterSolver_B.smax);
 
     // End of DataTypeConversion: '<S5>/Data Type Conversion4'
 
@@ -1097,16 +1161,17 @@ void ThrusterSolver::step()
     ThrusterSolver_B.BusAssignment2 = ThrusterSolver_P.Constant_Value;
     for (i = 0; i < 8; i++) {
       // DataTypeConversion: '<S5>/Data Type Conversion2'
-      ThrusterSolver_B.s = std::floor(ThrusterSolver_B.DataTypeConversion[i]);
-      if (std::isnan(ThrusterSolver_B.s) || std::isinf(ThrusterSolver_B.s)) {
-        ThrusterSolver_B.s = 0.0;
+      ThrusterSolver_B.smax = std::floor(ThrusterSolver_B.OverallSystem[i]);
+      if (std::isnan(ThrusterSolver_B.smax) || std::isinf(ThrusterSolver_B.smax))
+      {
+        ThrusterSolver_B.smax = 0.0;
       } else {
-        ThrusterSolver_B.s = std::fmod(ThrusterSolver_B.s, 4.294967296E+9);
+        ThrusterSolver_B.smax = std::fmod(ThrusterSolver_B.smax, 4.294967296E+9);
       }
 
-      ThrusterSolver_B.BusAssignment2.data[i] = ThrusterSolver_B.s < 0.0 ? -
-        static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.s)) :
-        static_cast<int32_T>(static_cast<uint32_T>(ThrusterSolver_B.s));
+      ThrusterSolver_B.BusAssignment2.data[i] = ThrusterSolver_B.smax < 0.0 ? -
+        static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.smax)) :
+        static_cast<int32_T>(static_cast<uint32_T>(ThrusterSolver_B.smax));
     }
 
     ThrusterSolver_B.BusAssignment2.data_SL_Info.CurrentLength =
@@ -1119,19 +1184,24 @@ void ThrusterSolver::step()
     // MATLABSystem: '<S13>/SinkBlock'
     Pub_ThrusterSolver_226.publish(&ThrusterSolver_B.BusAssignment2);
 
+    // SignalConversion generated from: '<S5>/Vector Concatenate'
+    std::memcpy(&ThrusterSolver_B.OverallSystem[0],
+                &ThrusterSolver_B.DataTypeConversion[0], sizeof(real_T) << 3U);
+
     // DataTypeConversion: '<S5>/Data Type Conversion3' incorporates:
     //   Constant: '<S5>/Constant1'
 
-    ThrusterSolver_B.s = std::floor(ThrusterSolver_P.Constant1_Value);
-    if (std::isnan(ThrusterSolver_B.s) || std::isinf(ThrusterSolver_B.s)) {
-      ThrusterSolver_B.s = 0.0;
+    ThrusterSolver_B.smax = std::floor(ThrusterSolver_P.Constant1_Value);
+    if (std::isnan(ThrusterSolver_B.smax) || std::isinf(ThrusterSolver_B.smax))
+    {
+      ThrusterSolver_B.smax = 0.0;
     } else {
-      ThrusterSolver_B.s = std::fmod(ThrusterSolver_B.s, 4.294967296E+9);
+      ThrusterSolver_B.smax = std::fmod(ThrusterSolver_B.smax, 4.294967296E+9);
     }
 
-    ThrusterSolver_B.len = ThrusterSolver_B.s < 0.0 ? static_cast<uint32_T>(-
-      static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.s))) :
-      static_cast<uint32_T>(ThrusterSolver_B.s);
+    ThrusterSolver_B.len = ThrusterSolver_B.smax < 0.0 ? static_cast<uint32_T>(-
+      static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.smax))) :
+      static_cast<uint32_T>(ThrusterSolver_B.smax);
 
     // End of DataTypeConversion: '<S5>/Data Type Conversion3'
 
@@ -1142,16 +1212,17 @@ void ThrusterSolver::step()
     ThrusterSolver_B.BusAssignment2 = ThrusterSolver_P.Constant_Value_k;
     for (i = 0; i < 8; i++) {
       // DataTypeConversion: '<S5>/Data Type Conversion1'
-      ThrusterSolver_B.s = std::floor(ThrusterSolver_B.RPMs[i]);
-      if (std::isnan(ThrusterSolver_B.s) || std::isinf(ThrusterSolver_B.s)) {
-        ThrusterSolver_B.s = 0.0;
+      ThrusterSolver_B.smax = std::floor(ThrusterSolver_B.OverallSystem[i]);
+      if (std::isnan(ThrusterSolver_B.smax) || std::isinf(ThrusterSolver_B.smax))
+      {
+        ThrusterSolver_B.smax = 0.0;
       } else {
-        ThrusterSolver_B.s = std::fmod(ThrusterSolver_B.s, 4.294967296E+9);
+        ThrusterSolver_B.smax = std::fmod(ThrusterSolver_B.smax, 4.294967296E+9);
       }
 
-      ThrusterSolver_B.BusAssignment2.data[i] = ThrusterSolver_B.s < 0.0 ? -
-        static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.s)) :
-        static_cast<int32_T>(static_cast<uint32_T>(ThrusterSolver_B.s));
+      ThrusterSolver_B.BusAssignment2.data[i] = ThrusterSolver_B.smax < 0.0 ? -
+        static_cast<int32_T>(static_cast<uint32_T>(-ThrusterSolver_B.smax)) :
+        static_cast<int32_T>(static_cast<uint32_T>(ThrusterSolver_B.smax));
     }
 
     ThrusterSolver_B.BusAssignment2.data_SL_Info.CurrentLength =
@@ -1261,7 +1332,11 @@ void ThrusterSolver::initialize()
       's', 'o', 'l', 'v', 'e', 'r', '_', 's', 'c', 'a', 'l', 'i', 'n', 'g', '_',
       'p', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 's' };
 
-    static const char_T tmp_3[29]{ 't', 'a', 'l', 'o', 's', '_', 'f', 'o', 'r',
+    static const char_T tmp_3[30]{ 't', 'h', 'r', 'u', 's', 't', 'e', 'r', '_',
+      's', 'o', 'l', 'v', 'e', 'r', '_', 'd', 'i', 's', 'a', 'b', 'l', 'e', '_',
+      'w', 'e', 'i', 'g', 'h', 't' };
+
+    static const char_T tmp_4[29]{ 't', 'a', 'l', 'o', 's', '_', 'f', 'o', 'r',
       'c', 'e', '_', 'c', 'u', 'r', 'v', 'e', '_', 'c', 'o', 'e', 'f', 'f', 'i',
       'c', 'e', 'n', 't', 's' };
 
@@ -1315,10 +1390,11 @@ void ThrusterSolver::initialize()
       ThrusterSolver_DW.PreviousWeights_PreviousInput[i] =
         ThrusterSolver_P.PreviousWeights_InitialConditio[i];
 
-      // SystemInitialize for Sum: '<S7>/Add Feed Forward' incorporates:
+      // SystemInitialize for Switch: '<S7>/Switch' incorporates:
       //   Outport: '<S7>/Thruster Forces'
+      //   Product: '<S7>/Feed Forward '
 
-      ThrusterSolver_B.AddFeedForward[i] = ThrusterSolver_P.ThrusterForces_Y0;
+      ThrusterSolver_B.Switch[i] = ThrusterSolver_P.ThrusterForces_Y0;
     }
 
     // End of SystemInitialize for SubSystem: '<Root>/Thruster Solver'
@@ -1337,18 +1413,18 @@ void ThrusterSolver::initialize()
     // End of SystemInitialize for SubSystem: '<Root>/Publish To ROS'
 
     // Start for MATLABSystem: '<Root>/Get Thruster Wrench Matrix'
-    ThrusterSolver_DW.obj_e.matlabCodegenIsDeleted = false;
-    ThrusterSolver_DW.obj_e.isInitialized = 1;
+    ThrusterSolver_DW.obj_et.matlabCodegenIsDeleted = false;
+    ThrusterSolver_DW.obj_et.isInitialized = 1;
     for (int32_T i{0}; i < 15; i++) {
-      ThrusterSolver_B.prmName_p[i] = tmp[i];
+      ThrusterSolver_B.prmName_cv[i] = tmp[i];
     }
 
     real_T varargin_1;
-    ThrusterSolver_B.prmName_p[15] = '\x00';
+    ThrusterSolver_B.prmName_cv[15] = '\x00';
     varargin_1 = 0.0;
-    ParamGet_ThrusterSolver_126.initParam(&ThrusterSolver_B.prmName_p[0]);
+    ParamGet_ThrusterSolver_126.initParam(&ThrusterSolver_B.prmName_cv[0]);
     ParamGet_ThrusterSolver_126.setInitialValue(&varargin_1, 1U);
-    ThrusterSolver_DW.obj_e.isSetupComplete = true;
+    ThrusterSolver_DW.obj_et.isSetupComplete = true;
 
     // End of Start for MATLABSystem: '<Root>/Get Thruster Wrench Matrix'
 
@@ -1380,11 +1456,11 @@ void ThrusterSolver::initialize()
     ThrusterSolver_DW.obj_d.matlabCodegenIsDeleted = false;
     ThrusterSolver_DW.obj_d.isInitialized = 1;
     for (int32_T i{0}; i < 13; i++) {
-      ThrusterSolver_B.prmName_f[i] = tmp_1[i];
+      ThrusterSolver_B.prmName_g[i] = tmp_1[i];
     }
 
-    ThrusterSolver_B.prmName_f[13] = '\x00';
-    ParamGet_ThrusterSolver_148.initParam(&ThrusterSolver_B.prmName_f[0]);
+    ThrusterSolver_B.prmName_g[13] = '\x00';
+    ParamGet_ThrusterSolver_148.initParam(&ThrusterSolver_B.prmName_g[0]);
     ParamGet_ThrusterSolver_148.setInitialValue(10L);
     ThrusterSolver_DW.obj_d.isSetupComplete = true;
 
@@ -1394,15 +1470,29 @@ void ThrusterSolver::initialize()
     ThrusterSolver_DW.obj_p.matlabCodegenIsDeleted = false;
     ThrusterSolver_DW.obj_p.isInitialized = 1;
     for (int32_T i{0}; i < 15; i++) {
-      ThrusterSolver_B.prmName_p[i] = tmp_2[i];
+      ThrusterSolver_B.prmName_cv[i] = tmp_2[i];
     }
 
-    ThrusterSolver_B.prmName_p[15] = '\x00';
-    ParamGet_ThrusterSolver_147.initParam(&ThrusterSolver_B.prmName_p[0]);
+    ThrusterSolver_B.prmName_cv[15] = '\x00';
+    ParamGet_ThrusterSolver_147.initParam(&ThrusterSolver_B.prmName_cv[0]);
     ParamGet_ThrusterSolver_147.setInitialValue(5L);
     ThrusterSolver_DW.obj_p.isSetupComplete = true;
 
     // End of Start for MATLABSystem: '<Root>/Individual Limit'
+
+    // Start for MATLABSystem: '<Root>/Individual Limit1'
+    ThrusterSolver_DW.obj_e.matlabCodegenIsDeleted = false;
+    ThrusterSolver_DW.obj_e.isInitialized = 1;
+    for (int32_T i{0}; i < 30; i++) {
+      ThrusterSolver_B.prmName_c[i] = tmp_3[i];
+    }
+
+    ThrusterSolver_B.prmName_c[30] = '\x00';
+    ParamGet_ThrusterSolver_327.initParam(&ThrusterSolver_B.prmName_c[0]);
+    ParamGet_ThrusterSolver_327.setInitialValue(10000000L);
+    ThrusterSolver_DW.obj_e.isSetupComplete = true;
+
+    // End of Start for MATLABSystem: '<Root>/Individual Limit1'
 
     // Start for MATLABSystem: '<S3>/Current Time'
     ThrusterSolver_DW.obj.matlabCodegenIsDeleted = false;
@@ -1418,12 +1508,12 @@ void ThrusterSolver::initialize()
     ThrusterSolver_DW.obj_a.matlabCodegenIsDeleted = false;
     ThrusterSolver_DW.obj_a.isInitialized = 1;
     for (int32_T i{0}; i < 29; i++) {
-      ThrusterSolver_B.prmName_c[i] = tmp_3[i];
+      ThrusterSolver_B.prmName_b[i] = tmp_4[i];
     }
 
-    ThrusterSolver_B.prmName_c[29] = '\x00';
+    ThrusterSolver_B.prmName_b[29] = '\x00';
     std::memset(&ThrusterSolver_B.varargin_1[0], 0, sizeof(int64_T) << 3U);
-    ParamGet_ThrusterSolver_205.initParam(&ThrusterSolver_B.prmName_c[0]);
+    ParamGet_ThrusterSolver_205.initParam(&ThrusterSolver_B.prmName_b[0]);
     ParamGet_ThrusterSolver_205.setInitialValue(&ThrusterSolver_B.varargin_1[0],
       8U);
     ThrusterSolver_DW.obj_a.isSetupComplete = true;
@@ -1436,8 +1526,8 @@ void ThrusterSolver::initialize()
 void ThrusterSolver::terminate()
 {
   // Terminate for MATLABSystem: '<Root>/Get Thruster Wrench Matrix'
-  if (!ThrusterSolver_DW.obj_e.matlabCodegenIsDeleted) {
-    ThrusterSolver_DW.obj_e.matlabCodegenIsDeleted = true;
+  if (!ThrusterSolver_DW.obj_et.matlabCodegenIsDeleted) {
+    ThrusterSolver_DW.obj_et.matlabCodegenIsDeleted = true;
   }
 
   // End of Terminate for MATLABSystem: '<Root>/Get Thruster Wrench Matrix'
@@ -1476,6 +1566,13 @@ void ThrusterSolver::terminate()
   }
 
   // End of Terminate for MATLABSystem: '<Root>/Individual Limit'
+
+  // Terminate for MATLABSystem: '<Root>/Individual Limit1'
+  if (!ThrusterSolver_DW.obj_e.matlabCodegenIsDeleted) {
+    ThrusterSolver_DW.obj_e.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<Root>/Individual Limit1'
 
   // Terminate for MATLABSystem: '<S3>/Current Time'
   if (!ThrusterSolver_DW.obj.matlabCodegenIsDeleted) {

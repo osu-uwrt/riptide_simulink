@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.50
+// Model version                  : 1.65
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 19 00:18:05 2023
+// C/C++ source code generated on : Thu Oct 19 01:13:05 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -1359,6 +1359,21 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
 
   0.0,
 
+  // Expression: 1
+  //  Referenced by: '<S7>/Constant1'
+
+  1.0,
+
+  // Expression: 0
+  //  Referenced by: '<S7>/Apply Overuse'
+
+  0.0,
+
+  // Expression: [0;0;0;0;0;0;0;0]
+  //  Referenced by: '<S7>/No Force'
+
+  { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+
   // Computed Parameter: ThrusterForces_Y0
   //  Referenced by: '<S7>/Thruster Forces'
 
@@ -1378,14 +1393,9 @@ P_ThrusterSolver_T ThrusterSolver::ThrusterSolver_P{
   { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 
   // Expression: 0
-  //  Referenced by: '<S7>/Apply Overuse'
+  //  Referenced by: '<S7>/Switch'
 
   0.0,
-
-  // Expression: 1
-  //  Referenced by: '<S7>/Constant1'
-
-  1.0,
 
   // Expression: 0
   //  Referenced by: '<S3>/Previous Reset'
