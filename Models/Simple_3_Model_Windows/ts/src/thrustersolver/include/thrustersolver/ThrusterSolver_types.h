@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.46
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 12 20:05:50 2023
+// C/C++ source code generated on : Wed Oct 18 23:23:26 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -109,7 +109,7 @@ struct SL_Bus_std_msgs_Int32MultiArray
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S11>/SinkBlock'
+// Custom Type definition for MATLABSystem: '<S5>/SourceBlock'
 #include "rmw/qos_profiles.h"
 #include "rmw/types.h"
 #include "rmw/types.h"
