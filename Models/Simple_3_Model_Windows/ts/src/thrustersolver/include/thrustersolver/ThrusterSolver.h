@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.65
+// Model version                  : 1.67
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 19 01:13:05 2023
+// C/C++ source code generated on : Thu Oct 19 19:05:12 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -67,22 +67,23 @@ struct B_ThrusterSolver_T {
   char_T prmName_c[31];
   char_T prmName_b[30];
   char_T b_zeroDelimTopic_p[26];
-  char_T prmName_cv[16];
-  char_T b_zeroDelimTopic_f[16];
+  char_T prmName_cv[20];
+  char_T prmName_f[16];
+  char_T b_zeroDelimTopic_g[16];
   char_T prmName_g[14];
   int8_T p[8];
   int8_T ipiv[8];
-  real_T rtb_CurrentTime_g;
+  real_T rtb_CurrentTime_m;
   real_T smax;
   real_T s;
   real_T Subtract;                     // '<S3>/Subtract'
   real_T ApplyOveruse;                 // '<S7>/Apply Overuse'
-  real_T smax_m;
-  real_T s_n;
-  int64_T value_p;
+  real_T smax_n;
+  real_T s_p;
   int64_T value_l;
   int64_T value_j;
   int64_T value_d;
+  int64_T value_g;
   uint64_T prod_unsgn;
   uint64_T yint;
   uint64_T b_y1;
@@ -90,7 +91,7 @@ struct B_ThrusterSolver_T {
   uint64_T n1;
   uint64_T n0;
   int8_T c_p[6];
-  int8_T ipiv_g[6];
+  int8_T ipiv_l[6];
   int32_T kAcol;
   uint32_T len;
 };
@@ -100,8 +101,9 @@ struct DW_ThrusterSolver_T {
   ros_slros2_internal_block_Cur_T obj; // '<S3>/Current Time'
   ros_slros2_internal_block_Get_T obj_d;// '<Root>/System Limit'
   ros_slros2_internal_block_Get_T obj_j;// '<Root>/Scaling Factor'
+  ros_slros2_internal_block_Get_T obj_p;// '<Root>/Individual Limit2'
   ros_slros2_internal_block_Get_T obj_e;// '<Root>/Individual Limit1'
-  ros_slros2_internal_block_Get_T obj_p;// '<Root>/Individual Limit'
+  ros_slros2_internal_block_Get_T obj_pl;// '<Root>/Individual Limit'
   ros_slros2_internal_block_Get_T obj_et;// '<Root>/Get Thruster Wrench Matrix'
   ros_slros2_internal_block_Get_T obj_a;
                                       // '<Root>/Force To RPM Curve Parameters'

@@ -1,5 +1,5 @@
 // Copyright 2022 The MathWorks, Inc.
-// Generated 19-Oct-2023 01:13:07
+// Generated 19-Oct-2023 19:05:16
 #include "slros2_initialize.h"
 // ThrusterSolver/Publish To ROS/Publish Thruster Forces1
 SimulinkPublisher<std_msgs::msg::Int32MultiArray,SL_Bus_std_msgs_Int32MultiArray> Pub_ThrusterSolver_210;
@@ -19,6 +19,8 @@ SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_ThrusterSol
 SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_147;
 // For Block ThrusterSolver/Individual Limit1
 SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_327;
+// For Block ThrusterSolver/Individual Limit2
+SimulinkParameterGetter<boolean_T,bool> ParamGet_ThrusterSolver_335;
 // For Block ThrusterSolver/Scaling Factor
 SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_197;
 // For Block ThrusterSolver/System Limit

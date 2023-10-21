@@ -1,5 +1,5 @@
 // Copyright 2022 The MathWorks, Inc.
-// Generated 19-Oct-2023 01:13:07
+// Generated 19-Oct-2023 19:05:16
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "ThrusterSolver_types.h"
@@ -51,6 +51,8 @@ extern SimulinkParameterArrayGetter<real64_T,std::vector<int64_t>> ParamGet_Thru
 extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_147;
 // For Block ThrusterSolver/Individual Limit1
 extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_327;
+// For Block ThrusterSolver/Individual Limit2
+extern SimulinkParameterGetter<boolean_T,bool> ParamGet_ThrusterSolver_335;
 // For Block ThrusterSolver/Scaling Factor
 extern SimulinkParameterGetter<int64_T,int64_t> ParamGet_ThrusterSolver_197;
 // For Block ThrusterSolver/System Limit
