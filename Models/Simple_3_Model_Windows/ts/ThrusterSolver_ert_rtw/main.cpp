@@ -4,9 +4,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.67
+// Model version                  : 1.84
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 19 19:05:17 2023
+// C/C++ source code generated on : Fri Oct 27 23:36:29 2023
 //
 #include "ros2nodeinterface.h"
 rclcpp::Node::SharedPtr SLROSNodePtr;

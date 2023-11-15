@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'ThrusterSolver'.
 //
-// Model version                  : 1.67
+// Model version                  : 1.84
 // Simulink Coder version         : 9.8 (R2022b) 13-May-2022
-// C/C++ source code generated on : Thu Oct 19 19:05:12 2023
+// C/C++ source code generated on : Fri Oct 27 23:36:26 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -51,7 +51,7 @@ struct B_ThrusterSolver_T {
   real_T Divide1[48];                  // '<Root>/Divide1'
   real_T b[36];
   real_T A_m[36];
-  real_T DataTypeConversion[8];        // '<Root>/Data Type Conversion'
+  real_T Divide[8];                    // '<Root>/Divide'
   real_T OverallSystem[8];             // '<S7>/Overall System'
   int64_T value_c[8];
   int64_T varargin_1[8];
@@ -84,15 +84,8 @@ struct B_ThrusterSolver_T {
   int64_T value_j;
   int64_T value_d;
   int64_T value_g;
-  uint64_T prod_unsgn;
-  uint64_T yint;
-  uint64_T b_y1;
-  uint64_T b_y0;
-  uint64_T n1;
-  uint64_T n0;
   int8_T c_p[6];
   int8_T ipiv_l[6];
-  int32_T kAcol;
   uint32_T len;
 };
 
@@ -245,8 +238,6 @@ class ThrusterSolver final
 
   // private member function(s) for subsystem '<Root>'
   void ThrusterSolver_inv(const real_T x[64], real_T y[64]);
-  uint64_T ThrusterSo_eml_mixed_uint64_mul(uint64_T nv, real_T y);
-  int64_T ThrusterSolver_times(int64_T x, real_T y);
   void ThrusterSo_SystemCore_setup_fam(ros_slros2_internal_block_Pub_T *obj);
   void ThrusterSol_SystemCore_setup_fa(ros_slros2_internal_block_Pub_T *obj);
   void ThrusterSolv_SystemCore_setup_f(ros_slros2_internal_block_Sub_T *obj);
@@ -263,6 +254,8 @@ extern volatile boolean_T runModel;
 //-
 //  These blocks were eliminated from the model due to optimizations:
 //
+//  Block '<Root>/Data Type Conversion' : Eliminate redundant data type conversion
+//  Block '<Root>/Force To Double' : Eliminate redundant data type conversion
 //  Block '<Root>/Reshape' : Reshape block reduction
 //  Block '<S7>/Reshape' : Reshape block reduction
 
