@@ -1,9 +1,55 @@
 """Small GitHub HTTP client; no gh executable or application secret."""
 import json
 import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
+
+
+class GitHubError(urllib.error.HTTPError):
+    """An HTTPError that says what GitHub refused and why; callers can still check .code."""
+
+    def __init__(self, error, url):
+        super().__init__(error.url, error.code, error.msg, error.hdrs, None)
+        self.message = explain(error, url)
+
+    def __str__(self):
+        return self.message
+
+
+def explain(error, url):
+    try:
+        detail = json.loads(error.read() or b'{}').get('message', '')
+    except (ValueError, AttributeError, OSError):
+        detail = ''
+    where = re.sub(r'^/repos/', '', urllib.parse.urlsplit(url).path)
+    headers = error.headers or {}
+
+    if error.code == 401:
+        text = ('GitHub rejected the login; sign in again (Advanced options > GitHub account) '
+                'or replace GITHUB_TOKEN')
+    elif error.code in (403, 429) and headers.get('X-RateLimit-Remaining') == '0':
+        reset = headers.get('X-RateLimit-Reset', '')
+        until = time.strftime(' until %H:%M', time.localtime(int(reset))) if reset.isdigit() else ''
+        text = f'GitHub API rate limit reached; sign in for a higher limit, or wait{until or " an hour"}'
+    elif error.code == 403:
+        text = f'GitHub refused access to {where}; this login may not have permission for the repository'
+    elif error.code == 404:
+        text = f'GitHub has no {where}, or this login cannot see it'
+    elif error.code >= 500:
+        text = f'GitHub had a server error ({error.code}) on {where}; try again shortly'
+    else:
+        text = f'GitHub rejected the request for {where} ({error.code} {error.reason})'
+    return text + (f' (GitHub says: {detail})' if detail and error.code != 401 else '')
+
+
+def unreachable(error):
+    """Network failures, without urllib's <urlopen error ...> wrapping."""
+    if isinstance(error, TimeoutError):
+        return ConnectionError('GitHub did not respond within 60 s; try again shortly')
+    return ConnectionError(f'Could not reach GitHub ({getattr(error, "reason", error)}); '
+                           'check the network connection')
 
 
 class Redirects(urllib.request.HTTPRedirectHandler):
@@ -48,8 +94,13 @@ def request(url, *, method='GET', data=None, token=None, raw=False, length=None)
         headers['Content-Length'] = str(length)
 
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
-    with urllib.request.build_opener(Redirects()).open(req, timeout=60) as response:
-        payload = response.read()
+    try:
+        with urllib.request.build_opener(Redirects()).open(req, timeout=60) as response:
+            payload = response.read()
+    except urllib.error.HTTPError as error:
+        raise GitHubError(error, url) from error
+    except (urllib.error.URLError, TimeoutError) as error:
+        raise unreachable(error) from error
     return payload if raw else (json.loads(payload) if payload else None)
 
 

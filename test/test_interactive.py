@@ -29,9 +29,9 @@ def test_listing_packages_and_settings_return_to_home(tmp_path):
     (models / 'plant.slx').touch()
     args = cli.arguments(['--workspace', str(tmp_path)])
     ui = UI()
-    choices = [[action('list')], [action('packages')], [action('advanced')], [action('quit')]]
+    choices = [action('list'), action('packages'), action('advanced'), action('quit')]
     with patch.object(tui, 'run', side_effect=lambda callback: callback(ui)), \
-            patch.object(tui, 'choose', side_effect=choices), \
+            patch.object(tui, 'home', side_effect=choices), \
             patch.object(tui, 'sections', side_effect=[7, len(interactive.TEXT), 8]), \
             patch.object(tui, 'page') as page:
         interactive.run(args)
@@ -59,11 +59,11 @@ def test_default_build_requires_only_model_selection_and_build():
 def test_back_from_action_returns_home_and_root_back_exits(tmp_path):
     args = cli.arguments(['--workspace', str(tmp_path)])
     with patch.object(tui, 'run', side_effect=lambda callback: callback(UI())), \
-            patch.object(tui, 'choose', side_effect=[[action('build')], tui.Back(), tui.Back()]) as choose:
+            patch.object(tui, 'home', side_effect=[action('build'), tui.Back()]) as home:
         # No models: the build page reports an error and returns home.
         with patch.object(tui, 'page'):
             interactive.run(args)
-        assert choose.call_count >= 2
+        assert home.call_count == 2
 
 
 def test_curses_results_back_and_prompt_editing():
@@ -647,3 +647,11 @@ def test_publish_without_saved_builds_explains(tmp_path):
     args = cli.arguments(['publish', '--archives-dir', str(tmp_path)])
     with pytest.raises(ValueError, match='No saved local builds'):
         interactive.configure(args, [])
+
+
+def test_failure_details_wrap_under_their_indent():
+    alert = 'Error: MATLAB code generation failed for plant:\n  ' + 'word ' * 30
+    rows = tui.summary_rows(tui.Board(), 60, alert)
+    lines = [row[0][1] for row in rows if row][:4]
+    assert lines[0] == 'Error: MATLAB code generation failed for plant:'
+    assert all(line.startswith('  word') for line in lines[1:])

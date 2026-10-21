@@ -10,6 +10,7 @@ import subprocess
 import textwrap
 import time
 
+from . import workspaces
 from .resources import memory_use
 
 _current = None
@@ -91,7 +92,8 @@ def _init_colors():
         except curses.error:
             background = curses.COLOR_BLACK
         colors = (('failed', curses.COLOR_RED), ('cancelled', curses.COLOR_YELLOW),
-                  ('done', curses.COLOR_GREEN), ('running', curses.COLOR_BLUE))
+                  ('done', curses.COLOR_GREEN), ('running', curses.COLOR_BLUE),
+                  ('workspace', curses.COLOR_CYAN))
         for number, (status, color) in enumerate(colors, 1):
             curses.init_pair(number, color, background)
             _palette[status] = curses.color_pair(number)
@@ -435,7 +437,13 @@ def summary_rows(board, width, alert='', stopped=None, tail=(), tool_lines=0, wa
     rows = []
     if alert:
         attribute = style('cancelled' if stopped and stopped['status'] == 'cancelled' else 'failed')
-        rows += [[(0, line, attribute)] for line in textwrap.wrap(alert, max(20, width - 1), break_on_hyphens=False)] + [[]]
+        # keep the message's own lines; indented details stay indented when they wrap
+        for paragraph in alert.splitlines():
+            indent = paragraph[:len(paragraph) - len(paragraph.lstrip())]
+            rows += [[(0, line, attribute)] for line in textwrap.wrap(
+                paragraph.strip(), max(20, width - 1), initial_indent=indent, subsequent_indent=indent,
+                break_on_hyphens=False)]
+        rows.append([])
     if width >= 120 and len(facts):
         offset = 40 + track
         for i in range(max(len(timeline), len(details))):
@@ -541,6 +549,61 @@ def sections(title, groups, selected=0):
         return curses.wrapper(_section_menu, title, groups, selected)
     except curses.error:
         return _plain_choose(title, labels, False, Back, groups)[0]
+
+
+def home(title, workspace, labels):
+    """Home page: workspace bar above the actions. Returns -1 for the workspace, else the action."""
+    if _current and _current.screen is not None:
+        return _home_menu(_current.screen, title, workspace, labels)
+
+    # numbered fallback: 0 is the workspace so actions keep their numbers
+    print(f'{title}\n  0. Workspace: {workspace}')
+    for i, label in enumerate(labels, 1):
+        print(f'  {i}. {label}')
+    while True:
+        answer = input('Selection (0 changes the workspace; q to quit): ').strip()
+        if answer.lower() in ('q', 'b'):
+            raise KeyboardInterrupt
+        if answer.isdigit() and int(answer) <= len(labels):
+            return int(answer) - 1
+        print('Choose a listed number, or q to quit.')
+
+
+def _home_menu(screen, title, workspace, labels):
+    screen.keypad(True)
+    screen.timeout(-1)
+    cursor = 0  # -1 is the workspace bar
+    while True:
+        screen.erase()
+        _, width = screen.getmaxyx()
+        _put(screen, 0, title, curses.A_BOLD)
+        _put(screen, 1, 'Arrows: move | Enter: select | w: workspace | q/Esc: quit')
+        marker = '> ' if cursor == -1 else '  '
+        _put(screen, 3, f'{marker}Workspace  {workspace}', bar('workspace') | curses.A_BOLD * (cursor == -1),
+             fill=True)
+        _put(screen, 4, '─' * (width - 1), _palette.get('workspace', 0))
+        for i, label in enumerate(labels):
+            _put(screen, i + 5, label, curses.A_REVERSE if i == cursor else curses.A_NORMAL)
+        screen.refresh()
+
+        key = screen.getch()
+        if key in (ord('q'), ord('b'), 27):
+            raise KeyboardInterrupt
+        if key == ord('w'):
+            return -1
+        if key in (curses.KEY_DOWN, ord('j')):
+            cursor = cursor + 1 if cursor < len(labels) - 1 else -1
+        elif key in (curses.KEY_UP, ord('k')):
+            cursor = cursor - 1 if cursor > -1 else len(labels) - 1
+        elif key in (10, 13, curses.KEY_ENTER):
+            return cursor
+
+
+def workspace(current):
+    """Pick a workspace directory: typed with Tab completion, or from presets."""
+    if _current:
+        return _current.workspace(current)
+    raise ValueError('Choosing a workspace requires the interactive manager')
 
 
 def _plain_choose(title, labels, multiple, cancel, groups=None):
@@ -906,7 +969,7 @@ class Session(Board):
             _put(self.screen, 1, ('Tab/←/→: view | ' if len(views) > 1 else '') + '↑/↓/PgUp/PgDn: scroll | ' +
                  ('Enter: continue | b/q/Esc: back' if back_cancels else 'Enter/b/q/Esc: back'), 0, left)
             if alert and name != 'Summary':
-                _put(self.screen, 2, alert, style(status or 'failed'))
+                _put(self.screen, 2, alert.splitlines()[0], style(status or 'failed'))
 
             for row, line in enumerate(lines[offset:offset + rows], 3):
                 if isinstance(line, str):
@@ -955,7 +1018,7 @@ class Session(Board):
             top, left = (1, 2) if footer else (0, 0)
             _put(self.screen, top, title, curses.A_BOLD, left)
             _put(self.screen, top + 1, 'Enter: accept | Esc: back | Ctrl-U: clear', 0, left)
-            _put(self.screen, top + 3, '> ' + value[-max(1, width - 4 - 2 * left):], 0, left)
+            _put(self.screen, top + 3, '> ' + value[-max(1, width - 5 - 2 * left):] + '▏', 0, left)
             if footer:
                 _frame(self.screen, height - len(footer))
             _footer(self.screen, footer)
@@ -972,6 +1035,95 @@ class Session(Board):
                 value = value[:-1]
             elif isinstance(key, str) and key.isprintable():
                 value += key
+
+    def workspace(self, current):
+        if self.screen is None:
+            presets = [workspaces.label(p) for p in workspaces.recent()]
+            for i, preset in enumerate(presets, 1):
+                print(f'  {i}. {preset}')
+            while True:
+                value = input(f'Workspace [{current}] (number or path; b: back): ').strip()
+                if value == 'b':
+                    raise Back
+                if value.isdigit() and 0 < int(value) <= len(presets):
+                    value = presets[int(value) - 1]
+                path = os.path.expanduser(value or current)
+                if os.path.isdir(path):
+                    return path
+                print(f'Not a directory: {value}')
+
+        value, edited, cursor, error = current, False, -1, ''
+        self.screen.timeout(-1)
+        while True:
+            # live lists: presets filtered once edited, then directory matches
+            presets = [workspaces.label(p) for p in workspaces.recent()]
+            if edited:
+                presets = [p for p in presets if value.strip() in p]
+            height, width = self.screen.getmaxyx()
+            footer = self._footer()
+            top, left = (1, 2) if footer else (0, 0)
+
+            # recent gets at most half the room, matches the rest
+            room = max(2, height - 9 - len(footer) - 2 * top)
+            presets = presets[:max(1, room // 2)]
+            found = workspaces.matches(value)[:max(1, room - len(presets))]
+            rows = [(p, True) for p in presets] + [(m, False) for m in found]
+            cursor = min(cursor, len(rows) - 1)
+
+            self.screen.erase()
+            _put(self.screen, top, 'Model search workspace', curses.A_BOLD, left)
+            _put(self.screen, top + 1, 'Tab: complete | Up/Down: pick | Enter: accept | Del: forget preset | '
+                 'Esc: back', 0, left)
+            _put(self.screen, top + 3, '> ' + value[-max(1, width - 5 - 2 * left):] + '▏',
+                 curses.A_BOLD if cursor == -1 else 0, left)
+            _put(self.screen, top + 4, error, style('failed'), left)
+
+            row = top + 6
+            for heading, entries, offset in (('Recent workspaces', presets, 0),
+                                             ('Matching directories', found, len(presets))):
+                _put(self.screen, row, heading, curses.A_BOLD, left)
+                row += 1
+                for i, entry in enumerate(entries, offset):
+                    _put(self.screen, row, '  ' + entry, curses.A_REVERSE if i == cursor else 0, left)
+                    row += 1
+                if not entries:
+                    _put(self.screen, row, '  (none)', curses.A_DIM, left)
+                    row += 1
+                row += 1
+            if footer:
+                _frame(self.screen, height - len(footer))
+            _footer(self.screen, footer)
+            self.screen.refresh()
+
+            key = self.screen.get_wch()
+            if key == '\x1b':
+                raise Back
+            if key == curses.KEY_DOWN:
+                cursor = cursor + 1 if cursor < len(rows) - 1 else -1
+            elif key == curses.KEY_UP:
+                cursor = cursor - 1 if cursor > -1 else len(rows) - 1
+            elif key == '\t':
+                value = rows[cursor][0] if cursor >= 0 else workspaces.complete(value)
+                edited, cursor, error = True, -1, ''
+            elif key == curses.KEY_DC and cursor >= 0 and rows[cursor][1]:
+                workspaces.forget(rows[cursor][0])
+            elif key in ('\n', '\r', curses.KEY_ENTER):
+                chosen = rows[cursor][0] if cursor >= 0 else value.strip()
+                path = os.path.expanduser(chosen)
+                if os.path.isdir(path):
+                    return path
+                error = f'Not a directory: {chosen}'
+            else:
+                # editing always returns focus to the input
+                if key == '\x15':
+                    value = ''
+                elif key in ('\b', '\x7f', curses.KEY_BACKSPACE):
+                    value = value[:-1]
+                elif isinstance(key, str) and key.isprintable():
+                    value += key
+                else:
+                    continue
+                edited, cursor, error = True, -1, ''
 
     def operation(self, title, callback):
         self.lines.clear()
@@ -1057,6 +1209,10 @@ def run(callback):
         started = True
         if screen is not None:
             _init_colors()
+            try:
+                curses.curs_set(0)  # otherwise it blinks wherever the last row was drawn
+            except curses.error:
+                pass  # Some terminals can't hide it.
         session = Session(screen)
         _current = session
         try:

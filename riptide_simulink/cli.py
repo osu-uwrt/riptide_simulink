@@ -30,7 +30,7 @@ def parser():
     p = argparse.ArgumentParser(description='Discover, generate and manage ROS 2 Simulink source packages.')
     p.add_argument('command', choices=COMMANDS, nargs='?', default=None)
     p.add_argument('models', nargs='*')
-    p.add_argument('--workspace', type=Path, default=ROOT / 'development/software/src')
+    p.add_argument('--workspace', type=Path)
     p.add_argument('--manifest', type=Path)
 
     # build and MATLAB
@@ -103,7 +103,12 @@ def arguments(argv):
     if argv and not argv[0].startswith('-') and argv[0] not in COMMANDS:
         argv.insert(0, 'build')
 
-    return parser().parse_args(argv)
+    args = parser().parse_args(argv)
+
+    # the TUI only reuses the last workspace when none was given
+    args.workspace_given = args.workspace is not None
+    args.workspace = args.workspace or ROOT / 'development/software/src'
+    return args
 
 
 def execute(args):
@@ -233,7 +238,7 @@ def execute(args):
         artifacts = backend.cached(chosen, arches, args.archives_dir, args.matlab_release, args.ros_distro)
     else:
         source = 'release' if args.command == 'download' else args.source
-        artifacts = None
+        artifacts, generation_error = None, None
         if source in ('auto', 'local'):
             print(f'Local route: {args.matlab} ({args.matlab_release}), architectures {", ".join(arches)}')
             check_build_memory(args)
@@ -246,13 +251,23 @@ def execute(args):
             except backend.GenerationError as error:
                 if source == 'local':
                     raise
+                generation_error = error
                 print(f'Local generation failed: {error}\nFalling back to GitHub release sources.', file=sys.stderr)
                 tui.stage('sources', 'running', 'Local generation failed; downloading release')
 
         if artifacts is None:
             tui.stage('sources', 'running', 'Downloading and validating GitHub release')
-            artifacts = backend.download(chosen, arches, args.archives_dir, args.matlab_release, args.ros_distro,
-                                         args.release, args.repository)
+            try:
+                artifacts = backend.download(chosen, arches, args.archives_dir, args.matlab_release,
+                                             args.ros_distro, args.release, args.repository)
+            except (ValueError, OSError, RuntimeError) as error:
+                if generation_error is None:
+                    raise
+                # the generation failure is the real problem; the fallback is secondary
+                raise backend.GenerationError(f'{generation_error}\nThe GitHub release fallback also failed:\n'
+                                              f'  {error}') from error
+            if generation_error is not None:
+                tui.fact('Local generation', f'failed, used the GitHub release instead: {generation_error}')
     tui.stage('sources', 'done', 'Local generation' if locally_generated else 'Cached/release sources')
     tui.fact('Source', 'Local MATLAB generation' if locally_generated else
              'Cached archives' if args.command == 'process-cached' else 'GitHub release')
@@ -275,8 +290,13 @@ def execute(args):
                     raise ValueError('--local-dir must be under a workspace src directory to build')
                 workspace = args.local_dir.parent.parent
                 backend.reset_stale_builds(workspace, args.local_dir, packages)
-                backend.run(['colcon', 'build', '--executor', 'sequential', '--packages-select', *packages],
-                            workspace, env=backend.build_environment(args.jobs))
+                try:
+                    backend.run(['colcon', 'build', '--executor', 'sequential', '--packages-select', *packages],
+                                workspace, env=backend.build_environment(args.jobs))
+                except subprocess.CalledProcessError as error:
+                    raise RuntimeError(f'colcon could not compile {", ".join(packages)} in {workspace} '
+                                       f'(exit status {error.returncode}); the compiler errors are in the '
+                                       f'colcon output') from error
                 tui.stage('devbuild', 'done')
             else:
                 tui.stage('devbuild', 'skipped', 'Source staging only')
@@ -297,8 +317,12 @@ def execute(args):
             tui.fact('Release staging', f'{", ".join(packages)} → {args.deploy_dir}')
             if args.deploy:
                 tui.stage('release', 'running', f'Deploying to {args.deploy_target}')
-                backend.run(['colcon', 'deploy', args.deploy_target, '--packages-select', *packages],
-                            args.deploy_dir.parent.parent)
+                try:
+                    backend.run(['colcon', 'deploy', args.deploy_target, '--packages-select', *packages],
+                                args.deploy_dir.parent.parent)
+                except subprocess.CalledProcessError as error:
+                    raise RuntimeError(f'colcon deploy of {", ".join(packages)} to {args.deploy_target} failed '
+                                       f'(exit status {error.returncode}); see the colcon output') from error
             tui.stage('release', 'done', 'Deployed' if args.deploy else 'Source staging only')
         else:
             tui.stage('release', 'skipped', 'No ARM64 artifacts')

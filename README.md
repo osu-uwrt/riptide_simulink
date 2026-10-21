@@ -34,7 +34,7 @@ Start the manager with no arguments to open the TUI:
 ros2 run riptide_simulink model_manager.py
 ```
 
-The usual flow is **Build models → select models → Build**. Arrows move, Space selects, Enter accepts, `b`/Escape goes back, and `q` at the home menu quits. When a build finishes, choose **Update GitHub model release** to share it.
+The usual flow is **Build models → select models → Build**. Arrows move, Space selects, Enter accepts, `b`/Escape goes back, and `q` at the home menu quits. The bar at the top of the home page shows the workspace being searched for models; select it to switch, with Tab completion and remembered presets. When a build finishes, choose **Update GitHub model release** to share it.
 
 Every action also works as a one-shot command:
 
@@ -63,7 +63,7 @@ Worked examples live in [examples/](examples/): a [manifest template](examples/s
 ```bash
 cd ~/osu-uwrt/development/software/src/riptide_simulink
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q test/test_manager.py test/test_publishing.py \
-  test/test_interactive.py test/test_resources.py
+  test/test_interactive.py test/test_resources.py test/test_workspaces.py
 
 cd ~/osu-uwrt/development/software
 source /opt/ros/humble/setup.bash

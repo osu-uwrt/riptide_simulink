@@ -2,6 +2,16 @@ function riptide_generate(requestFile)
     % Shared R2023a ROS 2 source-generation entry point. Never saves input models.
 
     request = jsondecode(fileread(requestFile));
+    try
+        generateAll(request, requestFile);
+    catch failure
+        reportFailure(request.output, '', '', failure);
+        rethrow(failure);
+    end
+end
+
+
+function generateAll(request, requestFile)
     if ~strcmp(['R' version('-release')], request.matlab)
         error('riptide:Version', 'Requested %s; running R%s.', request.matlab, version('-release'));
     end
@@ -41,7 +51,12 @@ function riptide_generate(requestFile)
     results = struct('model', {}, 'architecture', {}, 'archive', {});
     for i = 1:numel(request.models)
         item = request.models(i);
-        itemResults = generateModel(item, request, fullfile(request.output, sprintf('model_%d', i)));
+        try
+            itemResults = generateModel(item, request, fullfile(request.output, sprintf('model_%d', i)));
+        catch failure
+            reportFailure(request.output, item.model, '', failure);
+            rethrow(failure);
+        end
         results = [results itemResults]; %#ok<AGROW>
     end
 
@@ -103,105 +118,131 @@ function results = generateModel(item, request, modelOutput)
     originalName = original.Name;
     if isa(original, 'Simulink.ConfigSetRef'), original = getRefConfigSet(original); end
 
-    for j = 1:numel(request.architectures)
-        arch = request.architectures{j};
-        fprintf('RIPTIDE_PROGRESS %s\n', jsonencode(struct('model', item.model, ...
-            'architecture', arch, 'phase', sprintf('Generating (%d/%d)', j, numel(request.architectures)))));
+    % failures name the architecture for the python side
+    arch = '';
+    try
+        for j = 1:numel(request.architectures)
+            arch = request.architectures{j};
+            fprintf('RIPTIDE_PROGRESS %s\n', jsonencode(struct('model', item.model, ...
+                'architecture', arch, 'phase', sprintf('Generating (%d/%d)', j, numel(request.architectures)))));
 
-        % start from the consumer configuration or the model's own
-        if isfield(item.configurations, arch)
-            factory = item.configurations.(arch);
-            if isempty(regexp(factory, '^[A-Za-z]\w*(\.[A-Za-z]\w*)*$', 'once'))
-                error('riptide:Config', 'Configuration override must name a function');
+            % start from the consumer configuration or the model's own
+            if isfield(item.configurations, arch)
+                factory = item.configurations.(arch);
+                if isempty(regexp(factory, '^[A-Za-z]\w*(\.[A-Za-z]\w*)*$', 'once'))
+                    error('riptide:Config', 'Configuration override must name a function');
+                end
+                config = copy(feval(factory));
+            else
+                config = copy(original);
             end
-            config = copy(feval(factory));
-        else
-            config = copy(original);
-        end
 
-        name = ['RIPTIDE_' arch];
-        config.Name = name;
-        config = riptide_ert_config(config);
+            name = ['RIPTIDE_' arch];
+            config.Name = name;
+            config = riptide_ert_config(config);
 
-        set_param(config, 'HardwareBoard', 'Robot Operating System 2 (ROS 2)', ...
-            'TargetLang', 'C++', 'Toolchain', 'Colcon Tools', 'GenCodeOnly', 'on', ...
-            'MatFileLogging', 'off', 'CodeInterfacePackaging', 'C++ class');
+            set_param(config, 'HardwareBoard', 'Robot Operating System 2 (ROS 2)', ...
+                'TargetLang', 'C++', 'Toolchain', 'Colcon Tools', 'GenCodeOnly', 'on', ...
+                'MatFileLogging', 'off', 'CodeInterfacePackaging', 'C++ class');
 
-        % select the hardware for the architecture
-        if strcmp(arch, 'arm64')
-            set_param(config, 'ProdHWDeviceType', 'ARM Compatible->ARM 64-bit (LP64)');
-        elseif strcmp(arch, 'x86_64')
-            set_param(config, 'ProdHWDeviceType', 'Intel->x86-64 (Linux 64)');
-        else
-            error('riptide:Architecture', 'Unsupported architecture %s', arch);
-        end
+            % select the hardware for the architecture
+            if strcmp(arch, 'arm64')
+                set_param(config, 'ProdHWDeviceType', 'ARM Compatible->ARM 64-bit (LP64)');
+            elseif strcmp(arch, 'x86_64')
+                set_param(config, 'ProdHWDeviceType', 'Intel->x86-64 (Linux 64)');
+            else
+                error('riptide:Architecture', 'Unsupported architecture %s', arch);
+            end
 
-        set_param(config, 'ProdEqTarget', 'on');
-        % Keep the model's ROS settings, changing only generation/deployment settings.
-        target = get_param(config, 'CoderTargetData');
-        target.ROS2Install.Folder = ['/opt/ros/' request.ros];
-        % In R2023a RemoteBuild selects portable .tgz packaging. GenCodeOnly
-        % prevents a remote connection/build; the local mode produces no archive.
-        target.ROS.RemoteBuild = true;
-        target.Runtime.BuildAction = 'Build';
-        set_param(config, 'CoderTargetData', target);
+            set_param(config, 'ProdEqTarget', 'on');
+            % Keep the model's ROS settings, changing only generation/deployment settings.
+            target = get_param(config, 'CoderTargetData');
+            target.ROS2Install.Folder = ['/opt/ros/' request.ros];
+            % In R2023a RemoteBuild selects portable .tgz packaging. GenCodeOnly
+            % prevents a remote connection/build; the local mode produces no archive.
+            target.ROS.RemoteBuild = true;
+            target.Runtime.BuildAction = 'Build';
+            set_param(config, 'CoderTargetData', target);
 
-        % build with the temporary configuration
-        attachConfigSet(model, config);
-        setActiveConfigSet(model, name);
-        configCleanup = onCleanup(@() restoreConfig(model, originalName, name));
+            % build with the temporary configuration
+            attachConfigSet(model, config);
+            setActiveConfigSet(model, name);
+            configCleanup = onCleanup(@() restoreConfig(model, originalName, name));
 
-        output = fullfile(modelOutput, arch);
-        mkdir(output);
-        % A persistent build cache lets Simulink skip or reuse unchanged work.
-        codegen = output;
-        if isfield(item, 'build_cache') && ~isempty(item.build_cache)
-            codegen = fullfile(item.build_cache, arch);
-        end
-        Simulink.fileGenControl('set', 'CacheFolder', fullfile(codegen, 'cache'), ...
-            'CodeGenFolder', codegen, 'createDir', true);
-        % ROS Toolbox archives are emitted in the current working directory.
-        cd(output);
-        % Remove stale in-place archives so a freshly generated one is unambiguous.
-        removeArchives(codegen, model);
-        % The last good archive is set aside during the build. Simulink skips
-        % generation, and writes no archive, when the cached code is up to date.
-        stored = fullfile(codegen, 'riptide-last.tgz');
-        pending = [stored '.pending'];
+            output = fullfile(modelOutput, arch);
+            mkdir(output);
+            % A persistent build cache lets Simulink skip or reuse unchanged work.
+            codegen = output;
+            if isfield(item, 'build_cache') && ~isempty(item.build_cache)
+                codegen = fullfile(item.build_cache, arch);
+            end
+            Simulink.fileGenControl('set', 'CacheFolder', fullfile(codegen, 'cache'), ...
+                'CodeGenFolder', codegen, 'createDir', true);
+            % ROS Toolbox archives are emitted in the current working directory.
+            cd(output);
+            % Remove stale in-place archives so a freshly generated one is unambiguous.
+            removeArchives(codegen, model);
+            % The last good archive is set aside during the build. Simulink skips
+            % generation, and writes no archive, when the cached code is up to date.
+            stored = fullfile(codegen, 'riptide-last.tgz');
+            pending = [stored '.pending'];
 
-        if isfile(pending), delete(pending); end
-        if isfile(stored), movefile(stored, pending); end
+            if isfile(pending), delete(pending); end
+            if isfile(stored), movefile(stored, pending); end
 
-        % build, reusing the cached archive when nothing changed
-        buildModel(model, output, false);
-        archives = findArchives(output, codegen, model);
-        reused = isempty(archives) && isfile(pending);
-        if reused
-            fprintf('%s %s is up to date; reusing its cached archive.\n', model, arch);
-            movefile(pending, stored);
-            copyfile(stored, fullfile(output, [model '.tgz']));
-            archives = {fullfile(output, [model '.tgz'])};
-        elseif isempty(archives)
-            % Up to date but without a trusted archive (e.g. an interrupted build).
-            buildModel(model, output, true);
+            % build, reusing the cached archive when nothing changed
+            buildModel(model, output, false);
             archives = findArchives(output, codegen, model);
-        end
-        if isfile(pending), delete(pending); end
+            reused = isempty(archives) && isfile(pending);
+            if reused
+                fprintf('%s %s is up to date; reusing its cached archive.\n', model, arch);
+                movefile(pending, stored);
+                copyfile(stored, fullfile(output, [model '.tgz']));
+                archives = {fullfile(output, [model '.tgz'])};
+            elseif isempty(archives)
+                % Up to date but without a trusted archive (e.g. an interrupted build).
+                buildModel(model, output, true);
+                archives = findArchives(output, codegen, model);
+            end
+            if isfile(pending), delete(pending); end
 
-        if numel(archives) ~= 1
-            error('riptide:Archive', 'Expected one generated archive for %s; found %d', model, numel(archives));
-        end
-        if ~strcmp(codegen, output)
-            copyfile(archives{1}, stored);
-        end
+            if numel(archives) ~= 1
+                error('riptide:Archive', 'Expected one generated archive for %s; found %d', model, numel(archives));
+            end
+            if ~strcmp(codegen, output)
+                copyfile(archives{1}, stored);
+            end
 
-        results(end+1) = struct('model', item.model, 'architecture', arch, ...
-            'archive', archives{1}); %#ok<AGROW>
-        fprintf('RIPTIDE_PROGRESS %s\n', jsonencode(struct('model', item.model, ...
-            'architecture', arch, 'phase', 'Generation complete', 'cached', reused)));
+            results(end+1) = struct('model', item.model, 'architecture', arch, ...
+                'archive', archives{1}); %#ok<AGROW>
+            fprintf('RIPTIDE_PROGRESS %s\n', jsonencode(struct('model', item.model, ...
+                'architecture', arch, 'phase', 'Generation complete', 'cached', reused)));
 
-        clear configCleanup
+            clear configCleanup
+        end
+    catch failure
+        reportFailure(request.output, item.model, arch, failure);
+        rethrow(failure);
     end
+end
+
+
+function reportFailure(output, model, arch, failure)
+    % The innermost failure wins. Batch mode prints shutdown noise after the
+    % real error, so the python side reads this rather than the log tail.
+    file = fullfile(output, 'error.json');
+    if isfile(file), return; end
+    if ~isfolder(output), mkdir(output); end
+
+    messages = {failure.message};
+    for k = 1:numel(failure.cause)
+        messages{end+1} = failure.cause{k}.message; %#ok<AGROW>
+    end
+    fid = fopen(file, 'w');
+    if fid < 0, return; end
+    fprintf(fid, '%s', jsonencode(struct('model', model, 'architecture', arch, ...
+        'identifier', failure.identifier, 'message', strjoin(messages, newline))));
+    fclose(fid);
 end
 
 

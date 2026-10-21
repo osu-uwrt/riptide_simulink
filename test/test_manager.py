@@ -41,7 +41,7 @@ def test_discovery(tmp_path):
     (m.models_root / 'simulink.yaml').write_text(
         'defaults:\n  setup: initialize\nmodels:\n  plant:\n    github:\n      repository: org/repo\n')
     models = d.discover(tmp_path)
-    with pytest.raises(ValueError, match='2 matches'):
+    with pytest.raises(ValueError, match='matches 2 models'):
         d.select(models, ['plant'])
     assert d.select(models, [m.identity])[0].repository == 'org/repo'
     assert len(d.select(models, all_models=True)) == 2
@@ -137,6 +137,81 @@ def test_fallback_and_cancel(tmp_path):
             cli.execute(args)
         download.assert_not_called()
 
+
+
+def test_failed_fallback_reports_the_generation_error_first(tmp_path):
+    m = model(tmp_path)
+    args = cli.arguments(['build', m.name, '--workspace', str(tmp_path), '--no-process-local', '--no-process-deploy'])
+    with patch.object(b, 'generate', side_effect=b.GenerationError('MATLAB code generation failed for plant:\n'
+                                                                    '  bad block')), \
+            patch.object(b, 'download', side_effect=ValueError('No models-latest release in org/repo yet')):
+        with pytest.raises(b.GenerationError) as raised:
+            cli.execute(args)
+
+    assert str(raised.value).splitlines() == [
+        'MATLAB code generation failed for plant:', '  bad block',
+        'The GitHub release fallback also failed:', '  No models-latest release in org/repo yet']
+
+    # without a generation failure, a download error is reported as is
+    args.source = 'release'
+    with patch.object(b, 'download', side_effect=ValueError('No models-latest release')):
+        with pytest.raises(ValueError, match='^No models-latest release$'):
+            cli.execute(args)
+
+
+def test_matlab_failure_names_model_architecture_and_error(tmp_path):
+    m = model(tmp_path)
+
+    def failing(command, cwd, env):
+        (cwd / 'output').mkdir()
+        (cwd / 'output' / 'error.json').write_text(json.dumps(dict(
+            model=str(m.path), architecture='x86_64', identifier='Simulink:Engine:Error',
+            message='Undefined function \'gain_table\'.\nCaused by: <a href="x">missing</a> data')))
+        raise __import__('subprocess').CalledProcessError(1, command)
+
+    with patch.object(b.shutil, 'which', return_value='/fake/matlab'), patch.object(b, 'run', side_effect=failing):
+        with pytest.raises(b.GenerationError) as raised:
+            b.generate([m], ['x86_64'], tmp_path / 'cache')
+    assert str(raised.value) == ("MATLAB code generation failed for plant x86_64:\n"
+                                 "  Undefined function 'gain_table'.\n"
+                                 "  Caused by: missing data")
+
+    # no report: MATLAB died before the driver could write one
+    def crashed(command, cwd, env):
+        raise __import__('subprocess').CalledProcessError(9, command)
+
+    with patch.object(b.shutil, 'which', return_value='/fake/matlab'), patch.object(b, 'run', side_effect=crashed):
+        with pytest.raises(b.GenerationError, match='exit status 9 before reporting an error') as raised:
+            b.generate([m], ['x86_64'], tmp_path / 'cache')
+    assert 'riptide_driver' not in str(raised.value)
+
+    with patch.object(b.shutil, 'which', return_value=None):
+        with pytest.raises(b.GenerationError, match='MATLAB executable not found: matlab. Install R2023a'):
+            b.generate([m], ['x86_64'], tmp_path / 'cache')
+
+
+def test_colcon_failure_says_what_failed(tmp_path):
+    m = model(tmp_path)
+    args = cli.arguments(['build', m.name, '--workspace', str(tmp_path),
+                          '--local-dir', str(tmp_path / 'dev/src/simulink_models')])
+    r = dict(architecture=d.architecture(__import__('platform').machine()))
+    failure = __import__('subprocess').CalledProcessError(2, ['colcon', 'build'])
+    with patch.object(b, 'generate', return_value=[r]), patch.object(cli, 'install', return_value=['plant']), \
+            patch.object(b, 'run', side_effect=failure):
+        with pytest.raises(RuntimeError, match=r'colcon could not compile plant in .*\(exit status 2\)'):
+            cli.execute(args)
+
+
+def test_unknown_model_name_points_at_list(tmp_path):
+    models = [model(tmp_path)]
+    with pytest.raises(ValueError, match="No model named 'missing' in this workspace; the list command"):
+        d.select(models, ['missing'])
+
+
+def test_cached_route_without_cache_says_build_first(tmp_path):
+    m = model(tmp_path)
+    with pytest.raises(ValueError, match='No cached builds in .*; build or download models first'):
+        b.cached([m], ['x86_64'], tmp_path / 'empty', 'R2023a', 'humble')
 
 def test_local_setup_fallback(tmp_path):
     m = model(tmp_path)

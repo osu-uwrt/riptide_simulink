@@ -21,6 +21,7 @@ from .auth import Auth
 from .artifacts import INDEX, atomic_json, digest, extract, read_index
 from .cleanup import CACHE_MARKER, safe_path
 from .discovery import AmbiguousProjectError
+from .github import GitHubError, unreachable
 from . import tui
 from .resources import job_count
 
@@ -161,9 +162,7 @@ def message_summary(requests):
 def generate(models, arches, cache, matlab='matlab', version='R2023a', ros='humble', operation='generate',
              jobs=None, user_startup=False, work_cache=None):
     jobs = job_count(jobs)
-    executable = shutil.which(matlab)
-    if not executable:
-        raise GenerationError(f'MATLAB executable not found: {matlab}')
+    executable = find_matlab(matlab)
     cache = Path(cache).resolve()
     cache.mkdir(parents=True, exist_ok=True)
     work_cache = Path(work_cache).resolve() if work_cache else cache
@@ -194,11 +193,43 @@ def generate(models, arches, cache, matlab='matlab', version='R2023a', ros='humb
             f"addpath('{resource}');\nriptide_generate(fullfile(pwd,'request.json'));\n")
         try:
             run([executable, '-sd', work, '-batch', 'riptide_driver'], cwd=work, env=build_environment(jobs))
-            if operation != 'generate':
-                return []
+        except subprocess.CalledProcessError as error:
+            raise GenerationError(matlab_failure(work / 'output', error, operation)) from error
+        except OSError as error:
+            raise GenerationError(f'Could not start MATLAB ({executable}): {error}') from error
+        if operation != 'generate':
+            return []
+
+        try:
             return collect(models, arches, work / 'output', cache, version, ros, requests)
-        except (subprocess.CalledProcessError, OSError, ValueError, KeyError) as error:
-            raise GenerationError(f'MATLAB {operation} failed: {error}') from error
+        except (OSError, ValueError, KeyError) as error:
+            raise GenerationError(f'MATLAB finished, but its generated packages could not be collected: '
+                                  f'{error}') from error
+
+
+def find_matlab(matlab):
+    executable = shutil.which(matlab)
+    if not executable:
+        raise GenerationError(f'MATLAB executable not found: {matlab}. Install R2023a, or set '
+                              f'"MATLAB executable" in Advanced options (--matlab)')
+    return executable
+
+
+def matlab_failure(output, error, operation):
+    """Lead with the error the MATLAB driver recorded, not the command line."""
+    task = 'message generation' if operation == 'messages' else 'code generation'
+    try:
+        failure = json.loads((Path(output) / 'error.json').read_text())
+        where = ' '.join(filter(None, (Path(failure.get('model') or '').stem, failure.get('architecture'))))
+        lines = [line.rstrip() for line in re.sub(r'<[^>]+>', '', failure['message']).splitlines() if line.strip()]
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        # crashed, licensing, or died before the driver ran
+        return (f'MATLAB {task} stopped with exit status {error.returncode} before reporting an error:\n'
+                '  crash, license or startup problem; see the MATLAB output for details')
+
+    # the error goes on its own indented lines; long build reports keep their first few
+    message = '\n'.join('  ' + line for line in lines[:6]) + ('\n  ...' if len(lines) > 6 else '')
+    return f'MATLAB {task} failed' + (f' for {where}' if where else '') + f':\n{message}'
 
 
 def collect(models, arches, output, cache, version, ros, requests):
@@ -322,13 +353,22 @@ class GitHub:
                 content = response.read()
         except urllib.error.HTTPError as error:
             if error.code != 401 or 'Authorization' not in headers:
-                raise
+                raise GitHubError(error, url) from error
 
             # a stale login shouldn't block public releases
             print('GitHub rejected the saved login; continuing without it.')
             self.token = None
             return self.get(url, binary)
+        except (urllib.error.URLError, TimeoutError) as error:
+            raise unreachable(error) from error
         return content if binary else json.loads(content)
+
+    def hidden(self):
+        """Why a release may be invisible, given whether a login was used."""
+        if self.token:
+            return 'or your GitHub login cannot see that repository'
+        return ('or the repository is private (sign in from Advanced options > GitHub account, '
+                'or set GITHUB_TOKEN)')
 
     def release(self, repo, tag, channel='models-latest'):
         if (not repo or len(repo.split('/')) != 2
@@ -343,15 +383,14 @@ class GitHub:
             if error.code != 404:
                 raise
             if tag != 'latest':
-                raise ValueError(f'No release {tag} in {repo}, or the repository is private '
-                                 f'(sign in, or set GITHUB_TOKEN)') from error
+                raise ValueError(f'No release {tag} in {repo}, {self.hidden()}') from error
             try:
                 release = self.get(base + 'latest')
             except urllib.error.HTTPError as error:
                 if error.code != 404:
                     raise
-                raise ValueError(f'No {channel} release in {repo} yet, or the repository is private '
-                                 f'(sign in, or set GITHUB_TOKEN)') from error
+                raise ValueError(f'No {channel} release in {repo} yet; nobody has published models there, '
+                                 f'{self.hidden()}') from error
 
         # page through every asset
         assets, page = [], 1
@@ -419,19 +458,25 @@ def download(models, arches, cache, version, ros, release=None, repository=None,
                 repo_exact = [a for a in matches
                               if a.get('repository_identity', a['identity']) == model.repository_identity]
                 matches = exact or repo_exact or matches
+                if not matches:
+                    raise ValueError(f'{repo}@{data["tag_name"]} has no {arch} build of {model.name} for '
+                                     f'MATLAB {version} / ROS {ros}; build it locally or publish one first')
                 if len(matches) != 1:
-                    raise ValueError(f'Release has {len(matches)} compatible artifacts for {model.identity}/{arch}')
+                    raise ValueError(f'{repo}@{data["tag_name"]} has {len(matches)} {arch} builds of '
+                                     f'{model.name} and none matches {model.identity}; select it by path')
 
                 record = dict(matches[0])
                 asset = assets.get(record['asset'])
                 if not asset:
-                    raise ValueError(f'Missing release asset: {record["asset"]}')
+                    raise ValueError(f'{repo}@{data["tag_name"]} lists {record["asset"]} in its index but the '
+                                     f'file is missing; republish {model.name}')
 
                 # download, checksum, and test-extract
                 target = tmp / record['asset']
                 target.write_bytes(github.get(asset['url'], binary=True))
                 if digest(target) != record['sha256']:
-                    raise ValueError(f'Checksum mismatch: {target.name}')
+                    raise ValueError(f'Downloaded {target.name} does not match its published checksum; '
+                                     f'try again, or republish {model.name} if it keeps happening')
                 with tempfile.TemporaryDirectory() as stage:
                     extract(target, stage, record['packages'])
 
@@ -451,22 +496,26 @@ def download(models, arches, cache, version, ros, release=None, repository=None,
 
 
 def cached(models, arches, cache, version, ros):
+    if not (Path(cache) / INDEX).is_file():
+        raise ValueError(f'No cached builds in {cache}; build or download models first')
     records = read_index(Path(cache) / INDEX)['artifacts']
     selected = []
     for model in models:
         for arch in arches:
             matches = [a for a in records
                        if (a['identity'], a['architecture'], a['matlab'], a['ros']) == (model.identity, arch, version, ros)]
+            if not matches:
+                raise ValueError(f'No cached {arch} build of {model.name} for MATLAB {version} / ROS {ros} '
+                                 f'in {cache}; build or download it first')
             if len(matches) != 1:
-                raise ValueError(f'No unique cached artifact for {model.identity}/{arch}')
+                raise ValueError(f'The cache index lists {len(matches)} {arch} builds of {model.identity}; '
+                                 f'rebuild it to replace them')
             selected.extend(matches)
     return selected
 
 
 def open_model(model, matlab='matlab'):
-    executable = shutil.which(matlab)
-    if not executable:
-        raise GenerationError(f'MATLAB executable not found: {matlab}')
+    executable = find_matlab(matlab)
 
     request = model.request()
     with tempfile.TemporaryDirectory(prefix='riptide-open-') as tmp:

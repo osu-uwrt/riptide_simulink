@@ -200,9 +200,12 @@ def select(models, names=(), ignore=(), all_models=False):
     chosen = []
     for name in names:
         matches = [m for m in models if name in (m.name, m.identity, str(m.path))]
+        if not matches:
+            raise ValueError(f'No model named {name!r} in this workspace; the list command shows the available '
+                             f'models (use the name without .slx, a workspace-relative path, or an absolute path)')
         if len(matches) != 1:
-            candidates = ', '.join(m.identity for m in matches) or 'none'
-            raise ValueError(f'Model {name!r} has {len(matches)} matches: {candidates}. Use a workspace-relative path.')
+            candidates = ', '.join(m.identity for m in matches)
+            raise ValueError(f'{name!r} matches {len(matches)} models ({candidates}); use a workspace-relative path')
         if matches[0] not in chosen:
             chosen.append(matches[0])
 

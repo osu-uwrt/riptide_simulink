@@ -34,7 +34,7 @@ The rules:
 - Put model references and other helper models in `referenced_models/`. They are hidden from the default selection (but can still be selected by name). Other folders can be hidden with `exclude` in the manifest.
 - Build and cache folders are skipped: `build`, `install`, `log`, `slprj`, `*_ert_rtw`, `codegen`, `cache`, `generated_models`, `simulink_models`, `controller_models` and the like. Don't put source models in them.
 - Symbolic links are not followed.
-- The search starts at `~/osu-uwrt/development/software/src` (change it with `--workspace`).
+- The search starts at `~/osu-uwrt/development/software/src`. Change it with the workspace bar at the top of the TUI, or `--workspace`.
 
 ## 2. Name and prepare the model
 

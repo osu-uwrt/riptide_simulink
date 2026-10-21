@@ -32,6 +32,20 @@ With no command, the manager stays open until you quit.
 
 Listings and results are scrollable pages, and errors and cancellations return you to the manager. Terminals without cursor support get numbered prompts instead. Escape responds after 25 ms rather than ncurses' one second; an `ESCDELAY` you set yourself is respected.
 
+### Workspace
+
+The cyan bar at the top of the home page shows the workspace being searched for models. The cursor starts on **Build models**; press Up (or `w`) and Enter to change the workspace. The editor shows what you type, a **Recent workspaces** list, and a **Matching directories** list that updates as you type.
+
+| Key | Action |
+|---|---|
+| Tab | Complete the typed path, or copy the highlighted row into the input to go deeper |
+| Up/Down | Move between the input and the lists |
+| Enter | Use the highlighted row, or the typed path |
+| Delete | Forget the highlighted recent workspace |
+| Ctrl-U, Escape | Clear the input; go back without changing anything |
+
+The 10 most recently used workspaces are kept in `~/.local/state/riptide_simulink/workspaces.json` (`$XDG_STATE_HOME` if set), and the TUI starts in the last one. `--workspace` overrides that for one launch. Only model discovery changes; the output directories stay the same.
+
 ### Building
 
 The normal flow is **Build models → select models → Build**. By default it uses local MATLAB (falling back to the published release if generation fails), builds both architectures, compiles the host package, stages the release sources, and uses every CPU core.
@@ -103,7 +117,7 @@ Select models by name (`complete_controller`), workspace-relative path, or absol
 
 ## Where models come from
 
-The manager searches `~/osu-uwrt/development/software/src` (override with `--workspace`) for `.slx` files inside folders named `models`. [Adding a model](ADDING_MODELS.md) has the full rules and the `simulink.yaml` reference.
+The manager searches `~/osu-uwrt/development/software/src` (change it with the [workspace bar](#workspace) in the TUI, or `--workspace`) for `.slx` files inside folders named `models`. [Adding a model](ADDING_MODELS.md) has the full rules and the `simulink.yaml` reference.
 
 Without a manifest, the nearest `.prj` above the model is opened, and the repository's `origin` remote supplies the GitHub repository. More than one candidate project is an error until `project` is set. A model that needs data or messages that aren't configured reports its MATLAB error and, with `--source auto`, falls back to the published release.
 

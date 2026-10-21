@@ -753,3 +753,48 @@ def test_rejected_login_retries_anonymously(capsys):
         github.get('https://api.github.com/repos/org/repo')
     assert sent == ['Bearer stale-token', None, None]
     assert 'continuing without it' in capsys.readouterr().out
+
+
+def test_github_errors_explain_the_failure():
+    from riptide_simulink.github import GitHubError, unreachable
+    from urllib.error import URLError
+
+    limited = HTTPError('https://api.github.com/repos/org/repo', 403, 'Forbidden',
+                        {'X-RateLimit-Remaining': '0'}, io.BytesIO(b'{"message": "API rate limit exceeded"}'))
+    failure = GitHubError(limited, 'https://api.github.com/repos/org/repo/releases/tags/models-latest')
+    assert failure.code == 403 and isinstance(failure, HTTPError)
+    assert str(failure).startswith('GitHub API rate limit reached; sign in for a higher limit')
+
+    denied = GitHubError(error(403), 'https://api.github.com/repos/org/repo/releases')
+    assert str(denied) == 'GitHub refused access to org/repo/releases; this login may not have permission for the repository'
+    assert 'server error (502)' in str(GitHubError(error(502), 'https://api.github.com/repos/org/repo'))
+    assert str(unreachable(URLError('Name or service not known'))) == (
+        'Could not reach GitHub (Name or service not known); check the network connection')
+
+
+def test_download_client_explains_network_and_http_failures():
+    from urllib.error import URLError
+
+    class Opener:
+        def __init__(self, failure):
+            self.failure = failure
+
+        def open(self, request, timeout):
+            raise self.failure
+
+    github = backend.GitHub()
+    with patch.object(backend.urllib.request, 'build_opener', return_value=Opener(URLError('offline'))):
+        with pytest.raises(ConnectionError, match='Could not reach GitHub'):
+            github.get('https://api.github.com/repos/org/repo')
+    with patch.object(backend.urllib.request, 'build_opener', return_value=Opener(error(500))):
+        with pytest.raises(HTTPError, match='server error'):
+            github.get('https://api.github.com/repos/org/repo')
+
+
+def test_missing_release_hint_depends_on_login():
+    anonymous, signed_in = backend.GitHub(), backend.GitHub('token')
+    with patch.object(backend.GitHub, 'get', side_effect=error(404)):
+        with pytest.raises(ValueError, match='nobody has published models there, or the repository is private'):
+            anonymous.release('org/repo', 'latest')
+        with pytest.raises(ValueError, match='your GitHub login cannot see that repository'):
+            signed_in.release('org/repo', 'latest')

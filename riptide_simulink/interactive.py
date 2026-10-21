@@ -2,7 +2,7 @@
 from copy import deepcopy
 from pathlib import Path
 
-from . import cleanup, publishing, tui
+from . import cleanup, publishing, tui, workspaces
 from .artifacts import read_index
 from .auth import Auth
 from .discovery import discover
@@ -207,6 +207,10 @@ def edit(args, field):
             args.all = mode == 1
             return
 
+    if field == 'workspace':
+        change_workspace(args)
+        return
+
     # free text, checked for jobs and paths
     value = tui.prompt(TEXT[field], getattr(args, field) or '')
     if field == 'jobs':
@@ -214,8 +218,8 @@ def edit(args, field):
         if value < 1:
             raise ValueError('Compiler jobs must be positive')
     elif field in PATHS:
-        if not value and field in ('workspace', 'local_dir', 'deploy_dir', 'archives_dir'):
-            raise ValueError('Output/workspace paths cannot be empty')
+        if not value and field in ('local_dir', 'deploy_dir', 'archives_dir'):
+            raise ValueError('Output paths cannot be empty')
         value = Path(value).expanduser() if value else None
     setattr(args, field, value or None)
 
@@ -243,6 +247,11 @@ def settings(args):
             continue  # Editor -> same settings page, retaining the selected option.
         except ValueError as error:
             tui.page('Invalid setting', str(error))
+
+
+def change_workspace(args):
+    chosen = tui.workspace(workspaces.label(args.workspace))
+    args.workspace = workspaces.remember(chosen)
 
 
 def default_repository(defaults):
@@ -303,6 +312,11 @@ def advanced_home(defaults, perform):
 def run(defaults):
     from .cli import execute
 
+    # start where the user left off, unless --workspace says otherwise
+    if not getattr(defaults, 'workspace_given', True) and workspaces.last():
+        defaults.workspace = workspaces.last()
+    workspaces.remember(defaults.workspace)
+
     def application(ui):
         def perform(command):
             try:
@@ -341,7 +355,14 @@ def run(defaults):
         # home page
         while True:
             try:
-                selected = tui.choose('Simulink model manager', [title for title, _ in ACTIONS])[0]
+                selected = tui.home('Simulink model manager', workspaces.label(defaults.workspace),
+                                    [title for title, _ in ACTIONS])
+                if selected == -1:
+                    try:
+                        change_workspace(defaults)
+                    except tui.Back:
+                        pass  # Esc keeps the current workspace, back to home
+                    continue
                 command = ACTIONS[selected][1]
                 if command == 'quit':
                     return
