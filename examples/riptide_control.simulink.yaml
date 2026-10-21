@@ -1,0 +1,17 @@
+version: 1
+# Copy into riptide_control/riptide_controllers/models/simulink.yaml.
+# Paths below assume the standard development software/src layout.
+defaults:
+  project: Riptide_control_models.prj
+  messages:
+    - ../../../riptide_core/riptide_msgs
+  configurations:
+    x86_64: x86_cfg
+    arm64: arm_cfg
+  github:
+    repository: osu-uwrt/riptide_control
+    release: latest
+exclude:
+  - referenced_models/**
+models:
+  complete_system/complete_controller.slx: {}

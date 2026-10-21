@@ -1,0 +1,5 @@
+version: 1
+# Explicitly selectable for validation, excluded from ordinary all-model builds.
+models:
+  riptide_smoke:
+    exclude: true

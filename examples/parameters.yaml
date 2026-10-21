@@ -1,0 +1,4 @@
+/robot/model:
+  ros__parameters:
+    gain: 1.5
+    enabled: true

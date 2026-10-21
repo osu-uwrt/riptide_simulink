@@ -1,0 +1,17 @@
+version: 1
+# Place in a consumer's models directory. All paths are relative to this file.
+defaults:
+  # project: ControlModels.prj
+  # setup: initialize_models
+  messages: [] # ROS interface package directories, including custom dependencies
+  configurations: {} # Optional x86_64/arm64 MATLAB ConfigSet factory function names
+  github:
+    repository: osu-uwrt/your_model_repository
+    release: latest
+    publish_release: models-latest
+exclude:
+  - referenced_models/**
+models:
+  complete_system/complete_controller.slx:
+    # Native model settings are retained unless explicitly overridden.
+    exclude: false
