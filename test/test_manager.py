@@ -603,3 +603,16 @@ def test_no_archive_builds_keep_the_persistent_build_cache(tmp_path):
         b.generate([m], ['x86_64'], tmp_path / 'throwaway', work_cache=tmp_path / 'cache')
 
     assert all(Path(path).is_relative_to(tmp_path / 'cache') for path in seen[0])
+
+
+def test_find_matlab_falls_back_to_mac_applications(tmp_path):
+    for release in ('R2023a', 'R2025b'):
+        (tmp_path / f'MATLAB_{release}.app' / 'bin').mkdir(parents=True)
+        (tmp_path / f'MATLAB_{release}.app' / 'bin' / 'matlab').touch()
+
+    with patch.object(b.shutil, 'which', return_value=None), patch.object(b, 'MAC_APPLICATIONS', tmp_path):
+        assert b.find_matlab('matlab') == str(tmp_path / 'MATLAB_R2023a.app' / 'bin' / 'matlab')
+        assert b.find_matlab('matlab', 'R2024b') == str(tmp_path / 'MATLAB_R2025b.app' / 'bin' / 'matlab')
+        # an explicit launcher is never swapped for an app
+        with pytest.raises(b.GenerationError):
+            b.find_matlab('/opt/matlab')

@@ -123,7 +123,7 @@ Without a manifest, the nearest `.prj` above the model is opened, and the reposi
 
 ## MATLAB
 
-**Requirements.** MATLAB R2023a with Simulink, ROS Toolbox, Simulink Coder and Embedded Coder. The release is checked at runtime. `--matlab` picks a different launcher, and `--matlab-release` requests another release, but only R2023a is validated. Individual models may need more toolboxes for their own blocks.
+**Requirements.** MATLAB R2023a with Simulink, ROS Toolbox, Simulink Coder and Embedded Coder. The release is checked at runtime. `--matlab` picks a different launcher, and `--matlab-release` requests another release, but only R2023a is validated. Individual models may need more toolboxes for their own blocks. On macOS, an install in `/Applications/MATLAB_R*.app` is found without `--matlab`, but generating on a Mac is unsupported until the team moves past R2023a; Mac users download published builds.
 
 **Isolated startup.** Batch MATLAB skips your personal `startup.m`, using a temporary startup folder owned by the manager. Projects and manifest `setup` functions still run. To include your startup, enable **Run personal MATLAB startup** under Build and MATLAB, or pass `--user-startup`. **Open** in the MATLAB desktop always uses your normal startup.
 

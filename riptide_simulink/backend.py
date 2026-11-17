@@ -162,7 +162,7 @@ def message_summary(requests):
 def generate(models, arches, cache, matlab='matlab', version='R2023a', ros='humble', operation='generate',
              jobs=None, user_startup=False, work_cache=None):
     jobs = job_count(jobs)
-    executable = find_matlab(matlab)
+    executable = find_matlab(matlab, version)
     cache = Path(cache).resolve()
     cache.mkdir(parents=True, exist_ok=True)
     work_cache = Path(work_cache).resolve() if work_cache else cache
@@ -207,8 +207,17 @@ def generate(models, arches, cache, matlab='matlab', version='R2023a', ros='humb
                                   f'{error}') from error
 
 
-def find_matlab(matlab):
+MAC_APPLICATIONS = Path('/Applications')
+
+
+def find_matlab(matlab, version='R2023a'):
     executable = shutil.which(matlab)
+    if not executable and matlab == 'matlab':
+        # macOS installs aren't on PATH; take the requested release, else the newest
+        apps = list(MAC_APPLICATIONS.glob('MATLAB_R*.app/bin/matlab'))
+        if apps:
+            executable = str(max(apps, key=lambda app: (app.parent.parent.name == f'MATLAB_{version}.app',
+                                                        app.parent.parent.name)))
     if not executable:
         raise GenerationError(f'MATLAB executable not found: {matlab}. Install R2023a, or set '
                               f'"MATLAB executable" in Advanced options (--matlab)')
